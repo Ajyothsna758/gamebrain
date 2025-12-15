@@ -11,7 +11,8 @@ def signup_view(request):
     if request.method=="POST":
         form= SignUpForm(request.POST)
         if form.is_valid():
-            form.save()
+            user= form.save()
+            login(request, user) # for auto login
             # messages.success(request, "Account created successfully")
             return redirect("games")
     else:
