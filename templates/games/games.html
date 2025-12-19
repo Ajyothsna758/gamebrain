@@ -2,5 +2,14 @@
 {% block content %}
 <div>
     <h2>This is games page</h2>
+    <div>
+        {% for game in games %}
+        <div>
+        <img src="{{ game.image.url }}" alt="{{ game.name }}">
+            <h3>{{ game.name }}</h3>
+
+        </div>
+        {% endfor %}
+    </div>
 </div>
 {% endblock %}

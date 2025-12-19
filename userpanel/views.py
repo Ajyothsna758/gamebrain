@@ -38,7 +38,7 @@ def logout_view(request):
     messages.success(request, "Logout successfully")
     return redirect("home")
 
-@login_required
-def games(request):
-    return render(request, "games/games.html")            
+# @login_required
+# def games(request):
+#     return render(request, "games/games.html")            
             
