@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+<!-- {% load static %} -->
+{% block content %}
+<div class="page-container">
+    <div class="games-grid">
+        {% for item in wishlist_items %}
+        {% include 'partials/card.html' with game=item.game %}
+        {% empty %}
+        <p>No games in wishlist </p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
