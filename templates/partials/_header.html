@@ -1,11 +1,12 @@
 <nav style="display: flex; justify-content: center; align-items: center; gap: 30px; height: 60px;">
     {% if user.is_authenticated %}
     <a href="{% url 'games' %}" style="text-decoration: none; color: black;">Games</a>
-    <a href="{% url 'wishlist' %}" style="text-decoration: none; color: black;">WishList</a>
+    <a href="{% url 'wishlist' %}" style="text-decoration: none; color: black;">Wish List</a>
+    <a href="{% url 'library' %}" style="text-decoration: none; color: black;">Library</a>
     <a href="{% url 'logout' %}" style="text-decoration: none; color: black;">Logout</a>
 
     {% else %}
-    <a href="{% url 'sign_up' %}" style="text-decoration: none; color: black;">SignUp</a>
+    <a href="{% url 'sign_up' %}" style="text-decoration: none; color: black;">Sign Up</a>
     <a href="{% url 'home' %}" style="text-decoration: none; color: black;">Home</a>
     {% endif %}    
 </nav>

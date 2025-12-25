@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import Avg
+from django.core.validators import FileExtensionValidator
 
 # Create your models here.
   
@@ -50,7 +51,8 @@ class UserGameRating(models.Model):
         unique_together=["user", "game"]
     def __str__(self):
         return f"{self.user}={self.game.name}:{self.get_rating_display()}"  
-    
+
+# wishlist    
 class WishList(models.Model):
     user= models.ForeignKey(User, on_delete=models.CASCADE)
     game= models.ForeignKey(Game, on_delete=models.CASCADE)  
@@ -59,5 +61,26 @@ class WishList(models.Model):
         unique_together=("user", "game")  
     def __str__(self):
         return f"{self.user}: {self.game}"    
+
+# MyLibrary    
+class GameStatus(models.Model):
+    name= models.CharField(max_length=255)
+    description= models.TextField()
+    image= models.FileField(upload_to="status_icons/", validators=[FileExtensionValidator(["svg"])])
+    def __str__(self):
+        return self.name
     
+    
+class UserLibrary(models.Model):
+    user= models.ForeignKey(User, on_delete=models.CASCADE) 
+    game= models.ForeignKey(Game, on_delete=models.CASCADE)
+    status=models.ForeignKey(GameStatus, on_delete=models.SET_NULL, null=True)
+    added= models.DateTimeField(auto_now_add=True)
+    class Meta:
+        unique_together=["user", "game"]   
+        
+    def __str__(self):
+        return f"{self.user}: {self.game}"
+     
+     
                 

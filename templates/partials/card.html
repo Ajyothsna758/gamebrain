@@ -13,5 +13,53 @@
                     <img src="{% static 'img/icons/w_add.svg' %}" alt="remove from wishlist" class="wishlist-icon-remove">
                 {% endif %}
             </a>
-        </div>
+        {% if game.id in library_games %}
+        <div class="library-wrapper">
+            <a href="{% url 'library_toggle' game.id %}">
+                <img src="{% static 'img/icons/library_add.svg' %}" title="library_add" class="library-icon">
+            </a>
+            <img src="{% static 'img/icons/downarrow.svg' %}" title="dropdown" class="dropdown-toggle">
+            <div class="dropdown-menu">
+                {% for status in statuses %}
+                     <a href="{% url 'update_status' game.id status.id %}" class="status-item">
+                        
+                        <div class="status-main">
+                            <img src="{{ status.image.url }}" class="dropdown-icon">
+                            <span class="status-name">{{ status.name }}</span>
+                        </div>
+                        <span class="status-desc">{{ status.description }}</span>
+                     </a>
+                {% endfor %}
+                <div class="status-remove">
+                   <a href="{% url 'library_toggle' game.id %}">Remove from Library </a>
+                </div>
+                
+            </div>
 
+        </div>  
+        {% else %}
+        <a href="{% url 'library_toggle' game.id %}">
+            <img src="{% static 'img/icons/library_remove.svg' %}" class="library-icon"></a>
+        {% endif %}  
+
+
+</div>
+
+<script>
+document.addEventListener("click", function (e) {
+
+    // Close all dropdowns on outside click
+    document.querySelectorAll(".dropdown-menu").forEach(menu => {
+        if (!menu.contains(e.target)) {
+            menu.classList.remove("show");
+        }
+    });
+
+    // Toggle dropdown ONLY on arrow click
+    if (e.target.classList.contains("dropdown-toggle")) {
+        e.stopPropagation(); 
+        const wrapper = e.target.closest(".library-wrapper");
+        wrapper.querySelector(".dropdown-menu").classList.toggle("show");
+    }
+});
+</script>
