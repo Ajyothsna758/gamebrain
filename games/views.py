@@ -33,6 +33,7 @@ def games_list(request):
 @login_required
 def toggle_wishlist(request, game_id):
     game= get_object_or_404(Game, id=game_id) 
+    UserLibrary.objects.filter(user=request.user, game=game).delete()
     obj, created= WishList.objects.get_or_create(user=request.user, game=game)
     if not created:
         obj.delete()
@@ -56,6 +57,7 @@ def wishlist(request):
 def toggle_library(request, game_id):
     game= get_object_or_404(Game, id=game_id)
     status=get_object_or_404(GameStatus, name__iexact="Uncategorized")
+    WishList.objects.filter(user=request.user, game=game).delete()
     obj, created= UserLibrary.objects.get_or_create(
         user=request.user,
         game=game,
