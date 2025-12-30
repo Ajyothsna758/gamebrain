@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 # Create your views here.
-from .models import Game, UserGameRating, WishList, GameStatus, UserLibrary
+from .models import Game, GameRating, WishList, GameStatus, UserLibrary
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 
@@ -11,7 +11,7 @@ def games_list(request):
     user_ratings={}
     if request.user.is_authenticated:
         user_ratings={
-            r.game_id: r.rating for r in UserGameRating.objects.filter(user=request.user)
+            r.game_id: r.rating for r in GameRating.objects.filter(user=request.user)
         }
     # wishlist
     wishlist_games=WishList.objects.filter(user=request.user).values_list("game_id", flat=True)
