@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models import Avg
+from django.db.models import Avg, Count
 from django.core.validators import FileExtensionValidator
 
 # Create your models here.   
@@ -16,15 +16,29 @@ class Game(models.Model):
     description=models.TextField(blank=True)
     released= models.DateField(auto_now=False)
     #rating   
-    def average_rating(self):
-        avg= self.ratings.aggregate(avg=Avg("rating"))["avg"]
-        return round(avg,1) if avg else 0
-    def category_average(self, category_key):
-        avg= self.ratings.filter(category__key=category_key).aggregate(avg=Avg("rating_type__weight"))["avg"]
+    def overall_average(self):
+        avg= self.overall_ratings.aggregate(avg=Avg("rating_type__weight"))["avg"]
         return round(avg,1) if avg else 0
     
-    def average_label(self):
-        avg= self.average_rating()
+    def overall_breakdown(self):
+        total=self.overall_ratings.count() or 1
+        ratings= RatingType.objects.annotate(
+            count=Count("overall_ratings", filter=models.Q(overall_ratings__game=self))
+        ).order_by("-weight")
+        return [
+            {
+                "id":r.id,
+                "name":r.name,
+                "image":r.image.url,
+                "color":r.color,
+                "count":r.count,
+                "percentage":round((r.count / total)*100, 1)
+            }
+            for r in ratings
+        ]
+    
+    def overall_label(self):
+        avg= self.overall_average()
         if avg>= 3.5:
             return "Excellent"
         elif avg>= 2.5:
@@ -33,10 +47,31 @@ class Game(models.Model):
             return "Average"
         else:
             return "Skip"
+        
+    def category_average(self, category_key):
+        avg= self.category_ratings.filter(category__key=category_key).aggregate(avg=Avg("rating_type__weight"))["avg"]
+        return round(avg,1) if avg else 0    
     
-    
+    def category_breakdown(self, category):
+        total=self.category_ratings.filter(category=category).count() or 1
+        ratings= RatingType.objects.annotate(
+            count=Count("category_ratings", filter=models.Q(category_ratings__game=self, category_ratings__category=category))
+        ).order_by("-weight")
+        return [
+            {
+                "id": r.id,
+                "name": r.name,
+                "image":r.image.url,
+                "color": r.color,
+                "count": r.count,
+                "percent": round((r.count/total)*100,1),
+            }
+            for r in ratings
+        ]
+        
     def __str__(self):
         return self.name
+    
 
 # Ratings
 # categories (visual, gameplay, audio, story etc...)
@@ -57,19 +92,27 @@ class RatingType(models.Model):
     def __str__(self):
         return self.name    
 # user ratings
-class GameRating(models.Model):
+class GameOverallRating(models.Model):
     user= models.ForeignKey(User, on_delete=models.CASCADE)
-    game=models.ForeignKey(Game, on_delete=models.CASCADE, related_name="ratings")
-    category=models.ForeignKey(RatingCategory, on_delete=models.CASCADE)
+    game=models.ForeignKey(Game, on_delete=models.CASCADE, related_name="overall_ratings")
     rating_type= models.ForeignKey(RatingType, on_delete=models.CASCADE)
     updated_at= models.DateTimeField(auto_now=True)
     class Meta:
-        unique_together=["game", "user", "category"]
+        unique_together=["game", "user"]
     
     def __str__(self):
         return f"{self.user}: {self.game}-> {self.rating_type}"    
             
-
+class GameCategoryRating(models.Model):
+    user=models.ForeignKey(User, on_delete=models.CASCADE)
+    game=models.ForeignKey(Game, on_delete=models.CASCADE, related_name="category_ratings")
+    category=models.ForeignKey(RatingCategory, on_delete=models.CASCADE)
+    rating_type= models.ForeignKey(RatingType, on_delete=models.CASCADE)
+    updated_at=models.DateTimeField(auto_now=True)
+    class Meta:
+        unique_together=["game", "user", "category"]  
+    def __str__(self):
+        return f"{self.user}:{self.game}->{self.category}"              
 
 # wishlist    
 class WishList(models.Model):
