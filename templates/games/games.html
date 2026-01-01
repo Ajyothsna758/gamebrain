@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="page-container">
+    <h2>This is games page</h2>
+    <div class="games-grid">
+        {% for game in games %}
+        {% include 'partials/card.html' with game=game %}
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

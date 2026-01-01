@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+{% include 'partials/_statuses.html' %}
+<div class="page-container">
+    <div class="games-grid">
+        {% for item in library_items %}
+        {% include 'partials/card.html' with game=item.game %}
+        {% empty %}
+        <p>No games in library </p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

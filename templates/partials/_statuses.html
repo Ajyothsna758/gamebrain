@@ -1,0 +1,15 @@
+<nav class="library-navbar">
+    <ul>
+        <li class="{% if not active_status %}active{% endif %}">
+            <a href="{% url 'library' %}"> All Games</a>
+        </li>
+        {% for status in statuses %}
+           <li class="{% if active_status == status.id %}active{% endif %}">
+            <a href="{% url 'library_by_status' status.id %}">
+                <img src="{{ status.image.url }}" width="18" alt="{{ status.name }}">
+                {{ status.name }}
+            </a>
+           </li>
+        {% endfor %}
+    </ul>
+</nav>

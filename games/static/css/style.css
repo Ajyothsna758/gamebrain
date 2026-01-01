@@ -1,0 +1,190 @@
+.page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 16px;
+}
+.games-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* EXACTLY 4 */
+    gap: 20px;
+}
+.game-card {
+    background: #fff;
+    border-radius: 12px;
+    /* overflow: hidden; */
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    /* transition: transform 0.2s ease; */
+}
+
+.game-card:hover {
+    transform: translateY(-4px);
+}
+.game-image {
+    width: 100%;
+    /* height: 75%; */
+    aspect-ratio: 3 / 4;
+    object-fit: cover;  /* 🔥 KEY LINE */
+    display: block;
+}
+.card-body {
+    padding: 12px;
+    display: flex;
+    height: 25%;
+    justify-content: space-between;
+    align-items: center;
+}
+.wishlist-icon-add {
+    width: 40px;
+    height: 30px;
+    cursor: pointer;
+    background-color: lightblue;
+}
+.wishlist-icon-remove {
+    width: 40px;
+    height: 30px;
+    cursor: pointer;
+}
+/* library */
+.library-icon {
+    width: 36px !important;
+    height: 36px !important;
+    object-fit: contain;
+}
+.dropdown-icon {
+    width: 24px;
+    height: 24px;
+}
+.library-navbar ul {
+    list-style: none;
+    display: flex;
+    gap: 12px;
+    padding: 0;
+    margin: 0 0 16px 0;
+}
+.library-navbar li {
+    padding: 6px 12px;
+    border-radius: 6px;
+}
+.library-navbar li.active {
+    background-color: lightgreen;
+}
+.library-navbar a {
+    text-decoration: none;
+    color: black;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.library-wrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.library-icon {
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+}
+
+.dropdown-toggle {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 45px;       /* distance from arrow */
+    right: 0;        /* align with arrow */
+    left:10px;
+    background: lightgrey;
+    border-radius: 6px;
+    padding: 8px;
+    z-index: 999;
+    
+    width: 220px;    /* increase width */
+    max-height: 400px; /* optional: set max height */
+    overflow-y: auto;  /* scroll if content too long */
+}
+
+.dropdown-menu a {
+    display: flex;
+    /* align-items: center; */
+    gap: 8px;
+    padding: 6px;
+    color: black;
+    text-decoration: none;
+}
+
+.dropdown-menu a:hover {
+    background: grey;
+}
+
+/* visible state */
+.dropdown-menu.show {
+    display: block;
+}
+
+.dropdown-menu a:not(:last-child) {
+    border-bottom: 1px solid #444;
+}
+
+.status-item {
+    display: flex;
+    flex-direction: column;   /* stack main + description vertically */
+    gap: 2px;                 /* small gap between lines */
+    padding: 8px 12px;
+    text-decoration: none;
+    color: white;
+}
+
+.status-main {
+    display: flex;            /* icon + name in one line */
+    align-items: flex-start;
+    gap: 6px;                 /* space between icon and name */
+}
+
+.status-name {
+    font-weight: 600;
+    font-size: 14px;
+    white-space: nowrap;      /* prevent wrapping to second line */
+}
+
+.status-desc {
+    font-size: 12px;
+    color: black;
+    text-transform: lowercase;
+    line-height: 1.2;
+}
+.status-remove {
+    font-weight: 600;
+    font-size: 14px; 
+    color: red;
+}
+
+.status-item:hover {
+    background-color: #333;
+}
+
+
+@media (max-width: 1024px) {
+    .games-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .games-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .games-grid {
+        grid-template-columns: 1fr;
+    }
+}

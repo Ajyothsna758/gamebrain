@@ -1,0 +1,148 @@
+from django.db import models
+from django.contrib.auth.models import User
+from django.db.models import Avg, Count
+from django.core.validators import FileExtensionValidator
+
+# Create your models here.   
+    
+class Game(models.Model):
+    name= models.CharField(max_length=255)
+    developer= models.CharField(max_length=255)
+    publisher= models.CharField(max_length=255)
+    image= models.ImageField(upload_to="games/")
+    main_story= models.DecimalField(max_digits=5, decimal_places=2, null= True)
+    main_sides= models.DecimalField(max_digits=5, decimal_places=2, null=True)
+    completion= models.DecimalField(max_digits=5, decimal_places=2, null=True)
+    description=models.TextField(blank=True)
+    released= models.DateField(auto_now=False)
+    #rating   
+    def overall_average(self):
+        avg= self.overall_ratings.aggregate(avg=Avg("rating_type__weight"))["avg"]
+        return round(avg,1) if avg else 0
+    
+    def overall_breakdown(self):
+        total=self.overall_ratings.count() or 1
+        ratings= RatingType.objects.annotate(
+            count=Count("overall_ratings", filter=models.Q(overall_ratings__game=self))
+        ).order_by("-weight")
+        return [
+            {
+                "id":r.id,
+                "name":r.name,
+                "image":r.image.url,
+                "color":r.color,
+                "count":r.count,
+                "percentage":round((r.count / total)*100, 1)
+            }
+            for r in ratings
+        ]
+    
+    def overall_label(self):
+        avg= self.overall_average()
+        if avg>= 3.5:
+            return "Excellent"
+        elif avg>= 2.5:
+            return "Recommended"
+        elif avg>= 1.5:
+            return "Average"
+        else:
+            return "Skip"
+        
+    def category_average(self, category_key):
+        avg= self.category_ratings.filter(category__key=category_key).aggregate(avg=Avg("rating_type__weight"))["avg"]
+        return round(avg,1) if avg else 0    
+    
+    def category_breakdown(self, category):
+        total=self.category_ratings.filter(category=category).count() or 1
+        ratings= RatingType.objects.annotate(
+            count=Count("category_ratings", filter=models.Q(category_ratings__game=self, category_ratings__category=category))
+        ).order_by("-weight")
+        return [
+            {
+                "id": r.id,
+                "name": r.name,
+                "image":r.image.url,
+                "color": r.color,
+                "count": r.count,
+                "percent": round((r.count/total)*100,1),
+            }
+            for r in ratings
+        ]
+        
+    def __str__(self):
+        return self.name
+    
+
+# Ratings
+# categories (visual, gameplay, audio, story etc...)
+class RatingCategory(models.Model):
+    name=models.CharField(max_length=255)
+    key=models.CharField(max_length=50, unique=True)
+    def __str__(self):
+        return self.name
+# rating types
+class RatingType(models.Model):
+    name= models.CharField(max_length=50)
+    image= models.FileField(upload_to="ratings/", validators=[FileExtensionValidator(["svg"])])
+    weight=models.PositiveSmallIntegerField()
+    color=models.CharField(max_length=20, default="#000000")
+    class Meta:
+        ordering=["-weight"]
+        
+    def __str__(self):
+        return self.name    
+# user ratings
+class GameOverallRating(models.Model):
+    user= models.ForeignKey(User, on_delete=models.CASCADE)
+    game=models.ForeignKey(Game, on_delete=models.CASCADE, related_name="overall_ratings")
+    rating_type= models.ForeignKey(RatingType, on_delete=models.CASCADE)
+    updated_at= models.DateTimeField(auto_now=True)
+    class Meta:
+        unique_together=["game", "user"]
+    
+    def __str__(self):
+        return f"{self.user}: {self.game}-> {self.rating_type}"    
+            
+class GameCategoryRating(models.Model):
+    user=models.ForeignKey(User, on_delete=models.CASCADE)
+    game=models.ForeignKey(Game, on_delete=models.CASCADE, related_name="category_ratings")
+    category=models.ForeignKey(RatingCategory, on_delete=models.CASCADE)
+    rating_type= models.ForeignKey(RatingType, on_delete=models.CASCADE)
+    updated_at=models.DateTimeField(auto_now=True)
+    class Meta:
+        unique_together=["game", "user", "category"]  
+    def __str__(self):
+        return f"{self.user}:{self.game}->{self.category}"              
+
+# wishlist    
+class WishList(models.Model):
+    user= models.ForeignKey(User, on_delete=models.CASCADE)
+    game= models.ForeignKey(Game, on_delete=models.CASCADE)  
+    added= models.DateTimeField(auto_now_add=True)
+    class Meta:
+        unique_together=("user", "game")  
+    def __str__(self):
+        return f"{self.user}: {self.game}"    
+
+# MyLibrary    
+class GameStatus(models.Model):
+    name= models.CharField(max_length=255)
+    description= models.TextField()
+    image= models.FileField(upload_to="status_icons/", validators=[FileExtensionValidator(["svg"])])
+    def __str__(self):
+        return self.name
+    
+    
+class UserLibrary(models.Model):
+    user= models.ForeignKey(User, on_delete=models.CASCADE) 
+    game= models.ForeignKey(Game, on_delete=models.CASCADE)
+    status=models.ForeignKey(GameStatus, on_delete=models.SET_NULL, null=True)
+    added= models.DateTimeField(auto_now_add=True)
+    class Meta:
+        unique_together=["user", "game"]   
+        
+    def __str__(self):
+        return f"{self.user}: {self.game}"
+     
+     
+                
