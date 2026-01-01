@@ -10,11 +10,11 @@ class Game(models.Model):
     developer= models.CharField(max_length=255)
     publisher= models.CharField(max_length=255)
     image= models.ImageField(upload_to="games/")
-    main_story= models.DecimalField(max_digits=5, decimal_places=2, null= True)
-    main_sides= models.DecimalField(max_digits=5, decimal_places=2, null=True)
-    completion= models.DecimalField(max_digits=5, decimal_places=2, null=True)
+    main_story= models.DecimalField(max_digits=5, decimal_places=2, null= True, blank=True)
+    main_sides= models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    completion= models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     description=models.TextField(blank=True)
-    released= models.DateField(auto_now=False)
+    released= models.DateField(auto_now=False, blank=True)
     #rating   
     def overall_average(self):
         avg= self.overall_ratings.aggregate(avg=Avg("rating_type__weight"))["avg"]
@@ -84,7 +84,7 @@ class RatingCategory(models.Model):
 class RatingType(models.Model):
     name= models.CharField(max_length=50)
     image= models.FileField(upload_to="ratings/", validators=[FileExtensionValidator(["svg"])])
-    weight=models.PositiveSmallIntegerField()
+    weight=models.PositiveSmallIntegerField(default=0)
     color=models.CharField(max_length=20, default="#000000")
     class Meta:
         ordering=["-weight"]
@@ -127,7 +127,7 @@ class WishList(models.Model):
 # MyLibrary    
 class GameStatus(models.Model):
     name= models.CharField(max_length=255)
-    description= models.TextField()
+    description= models.TextField(max_length=1000)
     image= models.FileField(upload_to="status_icons/", validators=[FileExtensionValidator(["svg"])])
     def __str__(self):
         return self.name
@@ -136,7 +136,7 @@ class GameStatus(models.Model):
 class UserLibrary(models.Model):
     user= models.ForeignKey(User, on_delete=models.CASCADE) 
     game= models.ForeignKey(Game, on_delete=models.CASCADE)
-    status=models.ForeignKey(GameStatus, on_delete=models.SET_NULL, null=True)
+    status=models.ForeignKey(GameStatus, on_delete=models.SET_NULL, null=True, blank=True)
     added= models.DateTimeField(auto_now_add=True)
     class Meta:
         unique_together=["user", "game"]   

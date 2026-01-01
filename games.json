@@ -1,0 +1,426 @@
+[
+{
+    "model": "games.game",
+    "pk": 1,
+    "fields": {
+        "name": "Tomb Raider",
+        "developer": "Crystal Dynamics",
+        "publisher": "Square Enix",
+        "image": "games/tomb_raider.jpg",
+        "main_story": "11.50",
+        "main_sides": "15.50",
+        "completion": "21.00",
+        "description": "Tomb Raider explores the intense and gritty origin story of Lara Croft and her ascent from a young woman to a hardened survivor. Armed only with raw instincts and the ability to push beyond the limits of human endurance, Lara must fight to unravel the dark history of a forgotten island to escape its relentless hold.",
+        "released": "2025-12-18"
+    }
+},
+{
+    "model": "games.game",
+    "pk": 2,
+    "fields": {
+        "name": "Batman: Arkham Knight",
+        "developer": "Rocksteady Studios",
+        "publisher": "Warner Bros. Interactive",
+        "image": "games/batman.jpg",
+        "main_story": "17.00",
+        "main_sides": "31.50",
+        "completion": "51.00",
+        "description": "Batman: Arkham Knight is an action-adventure game developed by Rocksteady Studios, released in 2015. It is the final installment in the Arkham series. Players control Batman as he faces Scarecrow, who unites Gotham's criminals to destroy the Dark Knight. The mysterious Arkham Knight, a new adversary, aids Scarecrow in his plan. The game features open-world exploration, stealth, combat, and puzzle-solving. A key addition is the Batmobile, used for traversal and combat. The story explores Batman’s psychological struggles and the collapse of his alliances as Gotham spirals into chaos.",
+        "released": "2015-06-23"
+    }
+},
+{
+    "model": "games.game",
+    "pk": 3,
+    "fields": {
+        "name": "Assassin's Creed Valhalla",
+        "developer": "Ubisoft Montreal",
+        "publisher": "Ubisoft Entertainment",
+        "image": "games/assassins_creed.jpg",
+        "main_story": "61.00",
+        "main_sides": "99.00",
+        "completion": "150.00",
+        "description": "Become Eivor, a mighty Viking raider and lead your clan from the harsh shores of Norway to a new home amid the lush farmlands of ninth-century England. Explore a beautiful, mysterious open world where you'll face brutal enemies, raid fortresses, build your clan's new settlement, and forge alliances to win glory and earn a place in Valhalla. England in the age of the Vikings is a fractured nation of petty lords and warring kingdoms. Beneath the chaos lies a rich and untamed land waiting for a new conqueror. Will it be you?",
+        "released": "2020-11-10"
+    }
+},
+{
+    "model": "games.game",
+    "pk": 4,
+    "fields": {
+        "name": "Cities: Skylines II",
+        "developer": "Colossal Order",
+        "publisher": "Paradox Interactive",
+        "image": "games/cities_skylines.jpg",
+        "main_story": "29.50",
+        "main_sides": "55.50",
+        "completion": "101.00",
+        "description": "Create and manage your own city without restrictions. Offering a deep simulation and a living economy, Cities: Skylines II will challenge your decision-making skills and allow you to build the cities of your dreams. Get ready for a new epic scale in the most realistic city builder - ever.",
+        "released": "2023-10-24"
+    }
+},
+{
+    "model": "games.game",
+    "pk": 5,
+    "fields": {
+        "name": "Lonely Mountains: Downhill",
+        "developer": "Megagon Industries",
+        "publisher": "Thunderful Publishing, Megagon Industries",
+        "image": "games/downhill.jpg",
+        "main_story": "6.00",
+        "main_sides": "12.00",
+        "completion": "34.00",
+        "description": "Just you and your bike - take it on a thrilling ride down an unspoiled mountain landscape. Make your way through thick forests, narrow trails and wild rivers. Race, jump, slide and try not to crash - all the way from the peak to the valley!",
+        "released": "2019-10-23"
+    }
+},
+{
+    "model": "games.game",
+    "pk": 6,
+    "fields": {
+        "name": "Forza Motorsport",
+        "developer": "Turn 10 Studios",
+        "publisher": "Xbox Game Studios",
+        "image": "games/forza_motorsport.jpg",
+        "main_story": "36.50",
+        "main_sides": "67.50",
+        "completion": "164.00",
+        "description": "Out-build the competition in the new career. Race your friends in adjudicated multiplayer events. Compete in over 500 cars on world-famous tracks with cutting-edge AI, advanced physics, tire and fuel strategy, and driver and safety ratings.",
+        "released": "2023-10-23"
+    }
+},
+{
+    "model": "games.game",
+    "pk": 7,
+    "fields": {
+        "name": "Senua's Saga: Hellblade II",
+        "developer": "Ninja Theory",
+        "publisher": "Microsoft Game Studios",
+        "image": "games/hellblade.jpg",
+        "main_story": "7.00",
+        "main_sides": "8.00",
+        "completion": "9.00",
+        "description": "The sequel to the award winning Hellblade: Senua’s Sacrifice, Senua returns in a brutal journey of survival through the myth and torment of Viking Iceland. Intent on saving those who have fallen victim to the horrors of tyranny, Senua faces a battle of overcoming the darkness within and without. Sink deep into the next chapter of Senua’s story, a crafted experience told through cinematic immersion, beautifully realised visuals and encapsulating sound.",
+        "released": "2024-05-21"
+    }
+},
+{
+    "model": "games.game",
+    "pk": 8,
+    "fields": {
+        "name": "Hogwarts Legacy",
+        "developer": "Avalanche Software, Portkey Games",
+        "publisher": "Warner Bros. Interactive, Wizarding World",
+        "image": "games/hogwards_legacy.jpg",
+        "main_story": "26.50",
+        "main_sides": "45.50",
+        "completion": "71.50",
+        "description": "Hogwarts Legacy is an immersive, open-world action RPG set in the world first introduced in the Harry Potter books. Now you can take control of the action and be at the center of your own adventure in the wizarding world. Embark on a journey through familiar and new locations as you explore and discover fantastic beasts, customize your character and craft potions, master spell casting, upgrade talents, and become the wizard you want to be.",
+        "released": "2023-02-23"
+    }
+},
+{
+    "model": "games.game",
+    "pk": 9,
+    "fields": {
+        "name": "Star Wars Jedi: Survivor",
+        "developer": "Respawn Entertainment, Respawn",
+        "publisher": "Electronic Arts",
+        "image": "games/jedi.jpg",
+        "main_story": "20.50",
+        "main_sides": "33.50",
+        "completion": "55.00",
+        "description": "Star Wars Jedi: Survivor picks up five years after the events of Star Wars Jedi: Fallen Order. Cal must stay one step ahead of the Empire’s constant pursuit as he continues to feel the weight of being one of the last remaining Jedi in the galaxy.",
+        "released": "2023-04-23"
+    }
+},
+{
+    "model": "games.game",
+    "pk": 10,
+    "fields": {
+        "name": "Hitman",
+        "developer": "Feral Interactive, Square Enix, IO Interactive",
+        "publisher": "Square Enix, Feral Interactive, Warner Bros. Interactive",
+        "image": "games/hitman.jpg",
+        "main_story": "10.50",
+        "main_sides": "24.00",
+        "completion": "93.00",
+        "description": "Hitman is a six episodes game with different contracts. The action takes place as a prequel to Hitman: Agent 47 (only prologue) and episodes take place six years after Hitman: Absolution. All contracts are being ordered by a \"shadow client\" and seem to be unrelated. But as you fulfil those contracts, you start to realise that all of the targets somehow are a part of a secret organisation called the Providence.",
+        "released": "2016-03-11"
+    }
+},
+{
+    "model": "games.game",
+    "pk": 11,
+    "fields": {
+        "name": "Metal Gear Solid: Peace Walker",
+        "developer": "Kojima Productions",
+        "publisher": "Konami",
+        "image": "games/metal_gear.jpg",
+        "main_story": "18.00",
+        "main_sides": "28.50",
+        "completion": "96.00",
+        "description": "Metal Gear Solid: Peace Walker is an action-adventure stealth video game and is the third action-based Metal Gear title made specifically for the PSP. The gameplay consists of two primary modes: Mission and Mother Base. Mission are the actual action sequences of the game where the player must infiltrate an enemy territory or fight a boss, whereas Mother Base is an army management. Some changes have been made to the standard Metal Gear formula: the player is now unable to move or shoot while laying down and while pinned to a wall, making Peace Walker the first game since Metal Gear to lack any crawling ability.",
+        "released": "2010-04-29"
+    }
+},
+{
+    "model": "games.game",
+    "pk": 12,
+    "fields": {
+        "name": "Prey",
+        "developer": "Arkane Studios",
+        "publisher": "Bethesda Softworks",
+        "image": "games/prey.jpg",
+        "main_story": "16.50",
+        "main_sides": "28.00",
+        "completion": "47.00",
+        "description": "In Prey, you awaken aboard Talos I, a space station orbiting the moon in the year 2032. You are the key subject of an experiment meant to alter humanity forever – but things have gone terribly wrong. The space station has been overrun by hostile aliens and you are now being hunted. As you dig into the dark secrets of Talos I and your own past, you must survive using the tools found on the station, your wits, weapons, and mind-bending abilities.",
+        "released": "2017-05-04"
+    }
+},
+{
+    "model": "games.game",
+    "pk": 13,
+    "fields": {
+        "name": "Red Dead Redemption",
+        "developer": "Rockstar North, Rockstar Games, Double Eleven, Rockstar San Diego",
+        "publisher": "Rockstar Games",
+        "image": "games/red_dead_redemption.jpg",
+        "main_story": "17.50",
+        "main_sides": "26.00",
+        "completion": "46.00",
+        "description": "A modern-day Western epic, Red Dead Redemption takes John Marston, a relic from the fast-closing time of the gunslinger, through an open world filled with wildlife, mini-games, and shootouts. Marston sets out to hunt down his old gang mates for the government, who have taken away his family. Along his journey, he meets many characters emblematic of the Wild West, heroism, and the new civilization.",
+        "released": "2010-05-18"
+    }
+},
+{
+    "model": "games.game",
+    "pk": 14,
+    "fields": {
+        "name": "Unravel Two",
+        "developer": "Electronic Arts, Coldwood Interactive",
+        "publisher": "Electronic Arts",
+        "image": "games/unravel_two.jpg",
+        "main_story": "5.00",
+        "main_sides": "7.50",
+        "completion": "14.50",
+        "description": "Begin your adventure in a cold and imposing land, then watch your surroundings blossom with new life as you chase the spark of adventure. Dive into an immersive story filled with energy, exuberance, inspiration – even monsters. Approach every challenge with positivity and fearlessness to awaken the world around you, and discover an unbreakable bond between friends.",
+        "released": "2018-06-09"
+    }
+},
+{
+    "model": "games.ratingcategory",
+    "pk": 1,
+    "fields": {
+        "name": "Gameplay",
+        "key": "gameplay"
+    }
+},
+{
+    "model": "games.ratingcategory",
+    "pk": 2,
+    "fields": {
+        "name": "Visual",
+        "key": "visual"
+    }
+},
+{
+    "model": "games.ratingcategory",
+    "pk": 3,
+    "fields": {
+        "name": "Audio",
+        "key": "audio"
+    }
+},
+{
+    "model": "games.ratingcategory",
+    "pk": 4,
+    "fields": {
+        "name": "Story",
+        "key": "story"
+    }
+},
+{
+    "model": "games.ratingcategory",
+    "pk": 5,
+    "fields": {
+        "name": "Playability",
+        "key": "playability"
+    }
+},
+{
+    "model": "games.ratingtype",
+    "pk": 1,
+    "fields": {
+        "name": "Excellent",
+        "image": "ratings/excellent.svg",
+        "weight": 4,
+        "color": "#b4ec51"
+    }
+},
+{
+    "model": "games.ratingtype",
+    "pk": 2,
+    "fields": {
+        "name": "Recommended",
+        "image": "ratings/recommended.svg",
+        "weight": 3,
+        "color": "#649bff"
+    }
+},
+{
+    "model": "games.ratingtype",
+    "pk": 3,
+    "fields": {
+        "name": "Average",
+        "image": "ratings/average.svg",
+        "weight": 2,
+        "color": "#f7b31b"
+    }
+},
+{
+    "model": "games.ratingtype",
+    "pk": 4,
+    "fields": {
+        "name": "Skip",
+        "image": "ratings/skip.svg",
+        "weight": 1,
+        "color": "#D62127"
+    }
+},
+{
+    "model": "games.wishlist",
+    "pk": 8,
+    "fields": {
+        "user": [
+            "manasa"
+        ],
+        "game": 4,
+        "added": "2025-12-21T01:11:53.889Z"
+    }
+},
+{
+    "model": "games.wishlist",
+    "pk": 9,
+    "fields": {
+        "user": [
+            "manasa"
+        ],
+        "game": 3,
+        "added": "2025-12-21T01:12:05.583Z"
+    }
+},
+{
+    "model": "games.wishlist",
+    "pk": 10,
+    "fields": {
+        "user": [
+            "manasa"
+        ],
+        "game": 2,
+        "added": "2025-12-21T01:12:07.634Z"
+    }
+},
+{
+    "model": "games.wishlist",
+    "pk": 32,
+    "fields": {
+        "user": [
+            "rudhra"
+        ],
+        "game": 8,
+        "added": "2025-12-21T03:38:22.405Z"
+    }
+},
+{
+    "model": "games.wishlist",
+    "pk": 34,
+    "fields": {
+        "user": [
+            "rudhra"
+        ],
+        "game": 1,
+        "added": "2025-12-21T03:39:27.796Z"
+    }
+},
+{
+    "model": "games.wishlist",
+    "pk": 37,
+    "fields": {
+        "user": [
+            "rudhra"
+        ],
+        "game": 4,
+        "added": "2025-12-21T03:39:32.463Z"
+    }
+},
+{
+    "model": "games.wishlist",
+    "pk": 41,
+    "fields": {
+        "user": [
+            "rudhra"
+        ],
+        "game": 9,
+        "added": "2025-12-21T03:39:47.016Z"
+    }
+},
+{
+    "model": "games.gamestatus",
+    "pk": 1,
+    "fields": {
+        "name": "Uncategorized",
+        "description": "I'll pick or select category later",
+        "image": "status_icons/uncategorized.svg"
+    }
+},
+{
+    "model": "games.gamestatus",
+    "pk": 2,
+    "fields": {
+        "name": "Not played",
+        "description": "I'll play it later",
+        "image": "status_icons/notplayed.svg"
+    }
+},
+{
+    "model": "games.gamestatus",
+    "pk": 3,
+    "fields": {
+        "name": "Currently playing",
+        "description": "I play the game regularly",
+        "image": "status_icons/playing_PQdUd2Z.svg"
+    }
+},
+{
+    "model": "games.gamestatus",
+    "pk": 4,
+    "fields": {
+        "name": "Dropped",
+        "description": "I gave up and won't play it anymore",
+        "image": "status_icons/dropped.svg"
+    }
+},
+{
+    "model": "games.gamestatus",
+    "pk": 5,
+    "fields": {
+        "name": "Completed",
+        "description": "I reach my goal in the game",
+        "image": "status_icons/completed.svg"
+    }
+},
+{
+    "model": "games.userlibrary",
+    "pk": 84,
+    "fields": {
+        "user": [
+            "geetha"
+        ],
+        "game": 2,
+        "status": 1,
+        "added": "2025-12-26T04:59:53.309Z"
+    }
+}
+]
