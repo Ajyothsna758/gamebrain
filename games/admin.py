@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Game, UserLibrary, GameStatus, GameOverallRating, RatingCategory, RatingType, GameCategoryRating 
+from .models import Game, UserLibrary, GameStatus, GameOverallRating, RatingCategory, RatingType, GameCategoryRating, WishList
 #admin.site.register(Game)
 
 @admin.register(Game)
@@ -14,5 +14,6 @@ admin.site.register(RatingCategory)
 admin.site.register(RatingType) 
 admin.site.register(GameOverallRating)
 admin.site.register(GameCategoryRating)
+admin.site.register(WishList)
     
     
