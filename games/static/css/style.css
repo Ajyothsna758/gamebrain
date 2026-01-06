@@ -14,11 +14,12 @@
     /* overflow: hidden; */
     box-shadow: 0 6px 20px rgba(0,0,0,0.3);
     /* transition: transform 0.2s ease; */
+    position:relative;
 }
 
-.game-card:hover {
+/* .game-card:hover {
     transform: translateY(-4px);
-}
+} */
 .game-image {
     width: 100%;
     /* height: 75%; */
@@ -168,6 +169,80 @@
 
 .status-item:hover {
     background-color: #333;
+}
+
+/* rating */
+.overall-model { 
+    position: absolute;
+    top: calc(100% + 8px);     /* below card */
+    right:0;
+    left: auto;
+    width: 300px;
+    max-width: 95%;
+    display: none;
+    z-index: 50;
+
+}
+.overall-model.active {
+     display:block; 
+}
+.model-box {
+     background:lightgrey;
+     color:black; 
+     border: 1px solid #333;
+     padding: 12px;
+     margin-top: 8px;
+     border-radius: 8px;
+     box-shadow: 0 10px 30px rgba(0,0,0,.4);
+}
+
+.overall-modal *,
+.modal-box {
+    box-sizing: border-box;
+}
+.close { 
+    position:absolute; 
+    top:5px; 
+    right:10px; 
+    cursor:pointer; 
+    font-weight:bold; 
+}
+.rating-grid { 
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+}
+.overall-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px;
+    background: white;
+    color: black;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+}
+
+.overall-btn.active {
+    background: #4CAF50;
+    color: black;
+}
+
+.rating-bar { 
+    display:flex; 
+    height:20px; 
+    margin-top:8px; 
+}
+.segment { 
+    height:100%; 
+}
+.rating-image {
+    top:50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
 }
 
 

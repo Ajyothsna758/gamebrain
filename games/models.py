@@ -21,6 +21,18 @@ class Game(models.Model):
         return round(avg,1) if avg else 0
     
     def overall_breakdown(self):
+        if not self.overall_ratings.exists():
+            return [
+                {
+                    "id": None,
+                    "name": "No Reviews",
+                    "image": None,
+                    "color": "grey",
+                    "count": 0,
+                    "percentage": 100.0  
+                }
+            ]
+        
         total=self.overall_ratings.count() or 1
         ratings= RatingType.objects.annotate(
             count=Count("overall_ratings", filter=models.Q(overall_ratings__game=self))
@@ -45,8 +57,21 @@ class Game(models.Model):
             return "Recommended"
         elif avg>= 1.5:
             return "Average"
+        return "Skip"
+    
+    def overall_rating_image(self):
+        if not self.overall_ratings.exists():
+            return None
+        avg= self.overall_average()
+        if avg>= 3.5:
+            rating_type= RatingType.objects.filter(weight__gte=avg).order_by("weight").first()
+        elif avg>= 2.5:
+            rating_type= RatingType.objects.filter(weight__gte=avg).order_by("weight").first()
+        elif avg>= 1.5:
+            rating_type= RatingType.objects.filter(weight__gte=avg).order_by("weight").first()
         else:
-            return "Skip"
+            rating_type= RatingType.objects.filter(weight__gte=avg).order_by("weight").first()
+        return rating_type.image.url if rating_type else None               
         
     def category_average(self, category_key):
         avg= self.category_ratings.filter(category__key=category_key).aggregate(avg=Avg("rating_type__weight"))["avg"]
@@ -95,7 +120,7 @@ class RatingType(models.Model):
 class GameOverallRating(models.Model):
     user= models.ForeignKey(User, on_delete=models.CASCADE)
     game=models.ForeignKey(Game, on_delete=models.CASCADE, related_name="overall_ratings")
-    rating_type= models.ForeignKey(RatingType, on_delete=models.CASCADE)
+    rating_type= models.ForeignKey(RatingType, on_delete=models.CASCADE, related_name="overall_ratings")
     updated_at= models.DateTimeField(auto_now=True)
     class Meta:
         unique_together=["game", "user"]
@@ -143,6 +168,5 @@ class UserLibrary(models.Model):
         
     def __str__(self):
         return f"{self.user}: {self.game}"
-     
-     
+       
                 

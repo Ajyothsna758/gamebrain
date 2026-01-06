@@ -1,18 +1,14 @@
 from django.shortcuts import render, get_object_or_404, redirect
 # Create your views here.
-from .models import Game, WishList, GameStatus, UserLibrary
+from .models import Game, WishList, GameStatus, UserLibrary, RatingCategory, RatingType, GameOverallRating, GameCategoryRating
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
+from django.http import JsonResponse
 
 @login_required
 def games_list(request):
     games= Game.objects.all()
-    # rating
-    # user_ratings={}
-    # if request.user.is_authenticated:
-    #     user_ratings={
-    #         r.game_id: r.rating for r in GameRating.objects.filter(user=request.user)
-    #     }
     # wishlist
     wishlist_games=WishList.objects.filter(user=request.user).values_list("game_id", flat=True)
     # library
@@ -21,12 +17,23 @@ def games_list(request):
         lg.game_id: lg for lg in UserLibrary.objects.filter(user=request.user) 
     }
     # rating
+    rating_types= RatingType.objects.all()
+    overall_rating = {
+        r.game_id: r.rating_type_id for r in GameOverallRating.objects.filter(user=request.user)
+    }
+    category_rating= {
+        (r.game_id, r.category_id): r.rating_type_id for r in GameCategoryRating.objects.filter(user=request.user)
+    }
     
     return render(request, "games/games.html", 
                   {"games":games,
                    "wishlist_games": wishlist_games,
                    "statuses":statuses,
-                   "library_games":library_games})
+                   "library_games":library_games,
+                   "rating_types":rating_types,
+                   "overall_rating":overall_rating,
+                   "category_rating":category_rating,
+                   })
     
    
 
@@ -103,6 +110,32 @@ def library(request, status_id=None):
         "wishlist_games": wishlist_games,
     })  
     
-             
+# ratings
+@login_required
+@require_POST
+def save_overall_rating(request):
+    game_id= request.POST.get("game_id")
+    rating_id= request.POST.get("rating_id")
     
-               
+    game= get_object_or_404(Game, id=game_id)
+    rating= get_object_or_404(RatingType, id=rating_id)
+    
+    GameOverallRating.objects.update_or_create(
+        user=request.user,
+        game=game,
+        defaults={"rating_type": rating}
+    )
+    return JsonResponse({
+        "success": True,
+        "avg": game.overall_average(),
+        "label": game.overall_label(),
+        "breakdown": game.overall_breakdown(),
+        "rating_image": game.overall_rating_image(),
+        
+        })
+                
+@login_required
+@require_POST
+def save_category_rating(request):
+    game_id= request.POST.get("game_id")
+    rating_id= request.POST.get("rating_id")              

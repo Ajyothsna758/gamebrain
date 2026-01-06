@@ -1,8 +1,14 @@
 {% load static %}
-<div class="game-card">
+{% load dict_extras %}
+<div class="game-card" data-game="{{ game.id }}">
         <img src="{{ game.image.url }}" alt="{{ game.name }}" class="game-image">
         <div>
-            <h3>{{ game.name }}</h3>
+            <h3>
+                {{ game.name }} 
+                {% if game.overall_rating_image %}
+                    <img src="{{ game.overall_rating_image }}" alt="avg rating image" class="rating-image" id="game-{{ game.id }}-rating_image">
+                {% endif %}
+            </h3>
         </div>
             
             <p>{{ game.released }}</p>
@@ -42,7 +48,51 @@
             <img src="{% static 'img/icons/library_remove.svg' %}" class="library-icon"></a>
         {% endif %}  
 
+        <div class="overall-rating">
+            <strong id="game-{{ game.id }}-label ">{{ game.overall_label }}</strong>
+            <span id="game-{{ game.id }}-avg">{{ game.overall_average }}</span>
+        </div>
+        <button class="overall-open" data-game= "{{ game.id }}"> Rate</button>
+        <div class="rating-bar" id="overall-bar- {{ game.id }}">
+            {% if game.overall_breakdown %}
+                {% for r in game.overall_breakdown %}
+                    {% if r.id %}
+                        <div class="segment" style="width: {{ r.percentage }}%; background: {{ r.color }}" >
+                        {% if r.image %}
+                        <img src="{{ r.image }}" alt="{{ r.name }}" class="rating-image">
+                        {% endif %}
+                    </div>
+                    {% else %}
+                        <div class="segment" style="width: 100%; background: grey">
+                            <span>no reviews</span>
+                        </div>
+                    {% endif %}  
+                {% endfor %}
+            {% else %}
+                 <div class="segment" style="width: 100%; background: grey">
+                        <span>no reviews</span>
+                 </div>         
+            {% endif %}
+        </div>
+        <div class="overall-model" id="modal-{{ game.id }}">
+            <div class="model-box">
+                <button class="close">X</button>
+                <h4>overall rating</h4>
+                <div class="rating-grid">
+                    {% for rate in rating_types %}
+                       <button  type="button" class="rate-btn overall-btn 
+                                {% if overall_rating|get_item:game.id == rate.id %}active{% endif %}"
+                                data-game="{{ game.id }}"
+                                data-rating="{{ rate.id }}">
+                                <img src="{{ rate.image.url }}" alt="{{ rate.name }}" width="24">
+                                {{ rate.name }}
+                       </button>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
 
+        
 </div>
 
 <script>
@@ -62,4 +112,93 @@ document.addEventListener("click", function (e) {
         wrapper.querySelector(".dropdown-menu").classList.toggle("show");
     }
 });
+// overall rating
+document.addEventListener("DOMContentLoaded", function() {
+    // Open modal
+    function openModal(modal) {
+        modal.classList.add("active");
+    }
+
+    // Close modal
+    function closeModal(modal) {
+        modal.classList.remove("active");
+    }
+
+    // Open modal on "Rate" button click
+    document.querySelectorAll(".overall-open").forEach(btn => {
+        btn.addEventListener("click", function(e) {
+            e.stopPropagation(); // prevent document click from closing modal
+            const gameId = this.dataset.game;
+            const modal = document.getElementById(`modal-${gameId}`);
+            // close currently opened model before opening another model
+            document.querySelectorAll(".overall-model.active").forEach(activeModal => {
+                if (activeModal != modal){
+                    closeModal(activeModal);
+                }
+            });
+            if(modal) openModal(modal);
+        });
+    });
+
+    // Close modal on "X" button click
+    document.querySelectorAll(".overall-model .close").forEach(btn => {
+        btn.addEventListener("click", function(e) {
+            e.stopPropagation();
+            const modal = this.closest(".overall-model");
+            closeModal(modal);
+        });
+    });
+
+    // Close modal if clicking outside
+    document.addEventListener("click", function(e) {
+        document.querySelectorAll(".overall-model.active").forEach(modal => {
+            // If click is outside the modal and outside the "Rate" button
+            if(!modal.contains(e.target) && !e.target.classList.contains("overall-open")) {
+                closeModal(modal);
+            }
+        });
+    });
+
+    // Save rating via fetch
+    document.querySelectorAll(".overall-btn").forEach(btn => {
+        btn.addEventListener("click", function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const gameId = this.dataset.game;
+            const ratingId = this.dataset.rating;
+
+            fetch("{% url 'save_overall_rating' %}", {
+                method: "POST",
+                headers: {
+                    "content-type": "application/x-www-form-urlencoded",
+                    "x-CSRFToken": "{{ csrf_token }}"
+                },
+                body: new URLSearchParams({
+                    "game_id": gameId,
+                    "rating_id": ratingId
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                // remove active from all buttons in this modal
+                document.querySelectorAll(`#modal-${gameId} .overall-btn`).forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+
+                // update average 
+                const avgEle = document.querySelector(`#game-${gameId}-avg`);
+                const labelEle = document.querySelector(`#game-${gameId}-label`);
+                const ratingAvgImageEle = document.querySelector(`#game-${gameId}-rating_image`)
+                if(avgEle) avgEle.textContent = data.avg;               
+                if(labelEle) labelEle.textContent = data.label;
+                if(ratingAvgImageEle) {
+                    ratingAvgImageEle.src=data.rating_image;
+                }
+    
+            })
+            .catch(err => console.error(err));
+        });
+    });
+});
+
 </script>

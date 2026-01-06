@@ -6,10 +6,10 @@ name = "pypi"
 [packages]
 django = "*"
 djangorestframework = "*"
-mysqlclient = "*"
 pillow = "*"
-django-environ = "*"
 python-decouple = "*"
+mysqlclient = "*"
+django-environ = "*"
 
 [dev-packages]
 
