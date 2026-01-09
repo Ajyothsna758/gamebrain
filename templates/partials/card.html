@@ -74,6 +74,7 @@
                  </div>         
             {% endif %}
         </div>
+
         <div class="overall-model" id="modal-{{ game.id }}">
             <div class="model-box">
                 <button class="close">X</button>
@@ -87,6 +88,25 @@
                                 <img src="{{ rate.image.url }}" alt="{{ rate.name }}" width="24">
                                 {{ rate.name }}
                        </button>
+                    {% endfor %}
+                </div>
+                <hr>
+                <div class="category-model" id="modal-{{ game.id }}">
+                    {% for category in categories %}
+                      <div class="category-block">
+                        <h4>{{ category.name }}</h4>
+                        {% for rate in rating_types %}
+                        <button  type="button" class="rate-btn category-btn
+                                  {% if category_rating|get_item:game.id|get_item:category.id == rate.id %}active{% endif %}"
+                                  data-game="{{ game.id }}"
+                                  data-rating="{{ rate.id }}"
+                                  data-category="{{ category.id }}">
+                                
+                                <img src="{{ rate.image.url }}" alt="{{ rate.category_rating_name }}" width="24">
+                        </button>
+                           
+                        {% endfor %}
+                      </div>
                     {% endfor %}
                 </div>
             </div>
@@ -112,7 +132,7 @@ document.addEventListener("click", function (e) {
         wrapper.querySelector(".dropdown-menu").classList.toggle("show");
     }
 });
-// overall rating
+//  rating
 document.addEventListener("DOMContentLoaded", function() {
     // Open modal
     function openModal(modal) {
@@ -159,7 +179,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     });
 
-    // Save rating via fetch
+    // Save overall-rating via fetch
     document.querySelectorAll(".overall-btn").forEach(btn => {
         btn.addEventListener("click", function(e) {
             e.preventDefault();
@@ -195,6 +215,42 @@ document.addEventListener("DOMContentLoaded", function() {
                     ratingAvgImageEle.src=data.rating_image;
                 }
     
+            })
+            .catch(err => console.error(err));
+        });
+    });
+    // save category-rating via fetch api
+    document.querySelectorAll(".category-btn").forEach(btn =>{
+        btn.addEventListener("click", function (e){
+            e.preventDefault(); 
+            e.stopPropagation();
+            const gameId= this.dataset.game;
+            const categoryId= this.dataset.category;
+            const ratingId= this.dataset.rating;
+            
+            console.log("click:", gameId, categoryId, ratingId);
+
+            fetch("{% url 'save_category_rating' %}",{
+                method: "POST",
+                headers: {
+                    "content-type": "application/x-www-form-urlencoded",
+                    "x-CSRFToken": "{{ csrf_token }}"
+                },
+                body: new URLSearchParams({
+                    "game_id":gameId,
+                    "category_id": categoryId,
+                    "rating_id": ratingId,
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                // remove active from all buttons in this modal
+                 document.querySelectorAll(`#modal-${gameId} .category-btn[data-category="${categoryId}"]`)
+                    .forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+                // update average
+                const avgEle = document.querySelector(`#game-${gameId}-category-${categoryId}-avg`);
+                if(avgEle) avgEle.textContent = data.avg; 
             })
             .catch(err => console.error(err));
         });

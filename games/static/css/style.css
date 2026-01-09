@@ -244,6 +244,21 @@
     height: 20px;
     object-fit: contain;
 }
+/* category-rating */
+.category-btn {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    justify-content: center;
+}
+
+.category-btn img {
+    width: 24px;
+    height: 24px;
+}
+.category-btn.active {
+    background: #4CAF50;
+}
 
 
 @media (max-width: 1024px) {

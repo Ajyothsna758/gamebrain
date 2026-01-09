@@ -10,5 +10,6 @@ urlpatterns=[
     path("library/", views.library, name="library"),
     path("library/status/<int:status_id>/", views.library, name="library_by_status"),
     path("save_overall_rating", views.save_overall_rating, name="save_overall_rating"),
+    path("save_category_rating", views.save_category_rating, name="save_category_rating"),
     
 ]

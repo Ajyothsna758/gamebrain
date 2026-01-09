@@ -21,9 +21,13 @@ def games_list(request):
     overall_rating = {
         r.game_id: r.rating_type_id for r in GameOverallRating.objects.filter(user=request.user)
     }
-    category_rating= {
-        (r.game_id, r.category_id): r.rating_type_id for r in GameCategoryRating.objects.filter(user=request.user)
-    }
+    categories= RatingCategory.objects.all()
+    # category_rating= {
+    #     (r.game_id, r.category_id): r.rating_type_id for r in GameCategoryRating.objects.filter(user=request.user)
+    # }
+    category_rating = {}
+    for r in GameCategoryRating.objects.filter(user=request.user):
+        category_rating.setdefault(r.game_id, {})[r.category_id] = r.rating_type_id
     
     return render(request, "games/games.html", 
                   {"games":games,
@@ -33,6 +37,7 @@ def games_list(request):
                    "rating_types":rating_types,
                    "overall_rating":overall_rating,
                    "category_rating":category_rating,
+                   "categories":categories,
                    })
     
    
@@ -138,4 +143,26 @@ def save_overall_rating(request):
 @require_POST
 def save_category_rating(request):
     game_id= request.POST.get("game_id")
-    rating_id= request.POST.get("rating_id")              
+    rating_id= request.POST.get("rating_id") 
+    category_id= request.POST.get("category_id")
+    
+    game= get_object_or_404(Game, id=game_id)
+    category= get_object_or_404(RatingCategory, id=category_id)
+    rating= get_object_or_404(RatingType, id=rating_id)
+    
+    GameCategoryRating.objects.update_or_create(
+        user=request.user,
+        game=game,
+        category= category,
+        defaults={
+            "rating_type":rating,
+        }
+    )
+    return JsonResponse({
+        "success":True,
+        "category": category.key,
+        "category_avg": game.category_average(category.key),
+        "category_breakdown": game.category_breakdown(category),
+        
+    })
+                 

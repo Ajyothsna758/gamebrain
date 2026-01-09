@@ -89,6 +89,8 @@ class Game(models.Model):
                 "image":r.image.url,
                 "color": r.color,
                 "count": r.count,
+                "category_rating_name": r.category_rating_name,
+                "category_rating_description": r.category_rating_description,
                 "percent": round((r.count/total)*100,1),
             }
             for r in ratings
@@ -111,11 +113,14 @@ class RatingType(models.Model):
     image= models.FileField(upload_to="ratings/", validators=[FileExtensionValidator(["svg"])])
     weight=models.PositiveSmallIntegerField(default=0)
     color=models.CharField(max_length=20, default="#000000")
+    category_rating_name= models.CharField(max_length=50, null=True)
+    category_rating_description= models.TextField(max_length=500, null=True)
     class Meta:
         ordering=["-weight"]
         
     def __str__(self):
-        return self.name    
+        return self.name  
+
 # user ratings
 class GameOverallRating(models.Model):
     user= models.ForeignKey(User, on_delete=models.CASCADE)
@@ -132,7 +137,7 @@ class GameCategoryRating(models.Model):
     user=models.ForeignKey(User, on_delete=models.CASCADE)
     game=models.ForeignKey(Game, on_delete=models.CASCADE, related_name="category_ratings")
     category=models.ForeignKey(RatingCategory, on_delete=models.CASCADE)
-    rating_type= models.ForeignKey(RatingType, on_delete=models.CASCADE)
+    rating_type= models.ForeignKey(RatingType, on_delete=models.CASCADE, related_name="category_ratings")
     updated_at=models.DateTimeField(auto_now=True)
     class Meta:
         unique_together=["game", "user", "category"]  

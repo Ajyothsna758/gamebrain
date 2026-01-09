@@ -6,3 +6,7 @@ def get_item(d, key):
     if isinstance(d, dict):
         return d.get(key)
     return None
+
+@register.filter
+def category_average(game, category_key):
+    return game.category_average(category_key)
