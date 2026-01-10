@@ -179,6 +179,7 @@
     left: auto;
     width: 300px;
     max-width: 95%;
+    min-height: 120px; 
     display: none;
     z-index: 50;
 
@@ -222,6 +223,9 @@
     border-radius: 10px;
     border: none;
     cursor: pointer;
+    transition: none !important;
+     height: 36px; /* fixed height */
+    line-height: 24px;
 }
 
 .overall-btn.active {

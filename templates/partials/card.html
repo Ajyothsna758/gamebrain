@@ -52,6 +52,12 @@
             <strong id="game-{{ game.id }}-label ">{{ game.overall_label }}</strong>
             <span id="game-{{ game.id }}-avg">{{ game.overall_average }}</span>
         </div>
+        <div class="category-avg-check">
+            {% for category in categories %}
+                {{ category.name }}
+                (<span id="avg-{{ game.id }}-{{ category.key }}">{{ game|category_average_filter:category.key }}</span>)
+            {% endfor %}
+        </div>
         <button class="overall-open" data-game= "{{ game.id }}"> Rate</button>
         <div class="rating-bar" id="overall-bar- {{ game.id }}">
             {% if game.overall_breakdown %}
@@ -178,17 +184,80 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
     });
-
-    // Save overall-rating via fetch
+    // save and toggle overall rating via fetch
     document.querySelectorAll(".overall-btn").forEach(btn => {
+    btn.addEventListener("click", function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log("hi")
+
+        if (this.dataset.loading === "true") return;
+
+        const gameId = this.dataset.game;
+        const ratingId = this.dataset.rating;
+        
+        this.dataset.loading = "true";
+
+        fetch("{% url 'save_overall_rating' %}", {
+            method: "POST",
+            headers: {
+                "content-type": "application/x-www-form-urlencoded",
+                "x-CSRFToken": "{{ csrf_token }}"
+            },
+            body: new URLSearchParams({
+                "game_id": gameId,
+                "rating_id": ratingId
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                // 1. Manage Active States
+                const modalButtons = document.querySelectorAll(`#modal-${gameId} .overall-btn`);
+                modalButtons.forEach(b => b.classList.remove("active"));
+
+                // Only re-add active if we didn't just delete it
+                if (data.action === "saved") {
+                    btn.classList.add("active");
+                }
+
+                const avgEle = document.querySelector(`#game-${gameId}-avg`);
+                const labelEle = document.querySelector(`#game-${gameId}-label`);
+                const ratingAvgImg = document.querySelector(`#game-${gameId}-rating_image`);
+
+                if(avgEle) avgEle.textContent = data.avg;                
+                if(labelEle) labelEle.textContent = data.label;
+                if(ratingAvgImg) {
+                    if (data.rating_image) {
+                        ratingAvgImg.src = data.rating_image;
+                        ratingAvgImg.style.display = "inline-block";
+                    } else {
+                        ratingAvgImg.style.display = "none";
+                    }
+                }
+            }
+        })
+        .catch(err => console.error("Error:", err))
+        .finally(() => {
+            delete this.dataset.loading;
+        });
+    });
+});
+    // save category-rating via fetch api
+    document.querySelectorAll(".category-btn").forEach(btn => {
         btn.addEventListener("click", function(e) {
             e.preventDefault();
             e.stopPropagation();
 
+            if (this.dataset.loading === "true") return;
+
             const gameId = this.dataset.game;
             const ratingId = this.dataset.rating;
+            const categoryId = this.dataset.category;
+            
+            this.dataset.loading = "true";
 
-            fetch("{% url 'save_overall_rating' %}", {
+            fetch("{% url 'save_category_rating' %}", {
                 method: "POST",
                 headers: {
                     "content-type": "application/x-www-form-urlencoded",
@@ -196,63 +265,33 @@ document.addEventListener("DOMContentLoaded", function() {
                 },
                 body: new URLSearchParams({
                     "game_id": gameId,
-                    "rating_id": ratingId
-                })
-            })
-            .then(res => res.json())
-            .then(data => {
-                // remove active from all buttons in this modal
-                document.querySelectorAll(`#modal-${gameId} .overall-btn`).forEach(b => b.classList.remove("active"));
-                btn.classList.add("active");
-
-                // update average 
-                const avgEle = document.querySelector(`#game-${gameId}-avg`);
-                const labelEle = document.querySelector(`#game-${gameId}-label`);
-                const ratingAvgImageEle = document.querySelector(`#game-${gameId}-rating_image`)
-                if(avgEle) avgEle.textContent = data.avg;               
-                if(labelEle) labelEle.textContent = data.label;
-                if(ratingAvgImageEle) {
-                    ratingAvgImageEle.src=data.rating_image;
-                }
-    
-            })
-            .catch(err => console.error(err));
-        });
-    });
-    // save category-rating via fetch api
-    document.querySelectorAll(".category-btn").forEach(btn =>{
-        btn.addEventListener("click", function (e){
-            e.preventDefault(); 
-            e.stopPropagation();
-            const gameId= this.dataset.game;
-            const categoryId= this.dataset.category;
-            const ratingId= this.dataset.rating;
-            
-            console.log("click:", gameId, categoryId, ratingId);
-
-            fetch("{% url 'save_category_rating' %}",{
-                method: "POST",
-                headers: {
-                    "content-type": "application/x-www-form-urlencoded",
-                    "x-CSRFToken": "{{ csrf_token }}"
-                },
-                body: new URLSearchParams({
-                    "game_id":gameId,
-                    "category_id": categoryId,
                     "rating_id": ratingId,
+                    "category_id": categoryId
                 })
             })
             .then(res => res.json())
             .then(data => {
-                // remove active from all buttons in this modal
-                 document.querySelectorAll(`#modal-${gameId} .category-btn[data-category="${categoryId}"]`)
-                    .forEach(b => b.classList.remove("active"));
-                btn.classList.add("active");
-                // update average
-                const avgEle = document.querySelector(`#game-${gameId}-category-${categoryId}-avg`);
-                if(avgEle) avgEle.textContent = data.avg; 
+                if (data.success) {
+                    // 2. Manage Active States (ONLY for buttons within THIS category block)
+                    const categoryBlock = this.closest(".category-block");
+                    const categoryButtons = categoryBlock.querySelectorAll(".category-btn");
+                    
+                    categoryButtons.forEach(b => b.classList.remove("active"));
+
+                    if (data.action === "saved") {
+                        btn.classList.add("active");
+                    }
+
+                    const catAvgEle = document.getElementById(`avg-${gameId}-${data.category_key}`);
+                    if (catAvgEle) {
+                        catAvgEle.textContent = data.category_avg;
+                    } 
+                }    
             })
-            .catch(err => console.error(err));
+            .catch(err => console.error("Error:", err))
+            .finally(() => {
+                delete this.dataset.loading;
+            });
         });
     });
 });

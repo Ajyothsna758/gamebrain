@@ -8,5 +8,5 @@ def get_item(d, key):
     return None
 
 @register.filter
-def category_average(game, category_key):
+def category_average_filter(game, category_key):
     return game.category_average(category_key)

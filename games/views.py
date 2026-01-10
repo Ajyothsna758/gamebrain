@@ -5,6 +5,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.http import JsonResponse
+from django.db import transaction
+import json
 
 @login_required
 def games_list(request):
@@ -115,7 +117,7 @@ def library(request, status_id=None):
         "wishlist_games": wishlist_games,
     })  
     
-# ratings
+#  overall ratings
 @login_required
 @require_POST
 def save_overall_rating(request):
@@ -123,22 +125,41 @@ def save_overall_rating(request):
     rating_id= request.POST.get("rating_id")
     
     game= get_object_or_404(Game, id=game_id)
-    rating= get_object_or_404(RatingType, id=rating_id)
+    rating_id= int(rating_id) #ensure rating_id is integer for comparison
     
-    GameOverallRating.objects.update_or_create(
-        user=request.user,
-        game=game,
-        defaults={"rating_type": rating}
-    )
+    # save whole block at once in db (to avoid partial records)
+    with transaction.atomic():
+        record=GameOverallRating.objects.filter(user=request.user, game=game).first()
+        # check record is present or not in table
+        if record:
+            if record.rating_type_id == rating_id:
+                # user clicked on active button (delete)
+                record.delete()
+                action="deleted"
+            else:
+                # user clicked on another button (update) 
+                updated_rating= get_object_or_404(RatingType, id=rating_id)
+                record.rating_type= updated_rating
+                record.save()
+                action="saved"
+        else:
+            new_rating= get_object_or_404(RatingType, id=rating_id) 
+            GameOverallRating.objects.create(
+                user=request.user,
+                game=game,
+                rating_type=new_rating
+            )  
+            action="saved" 
     return JsonResponse({
         "success": True,
-        "avg": game.overall_average(),
-        "label": game.overall_label(),
+        "action": action,
+        "avg":game.overall_average(),
+        "label":game.overall_label(),
         "breakdown": game.overall_breakdown(),
-        "rating_image": game.overall_rating_image(),
-        
-        })
-                
+        "rating_image":game.overall_rating_image(),
+    })    
+
+# category rating               
 @login_required
 @require_POST
 def save_category_rating(request):
@@ -148,21 +169,37 @@ def save_category_rating(request):
     
     game= get_object_or_404(Game, id=game_id)
     category= get_object_or_404(RatingCategory, id=category_id)
-    rating= get_object_or_404(RatingType, id=rating_id)
+    rating_id= int(rating_id)
     
-    GameCategoryRating.objects.update_or_create(
-        user=request.user,
-        game=game,
-        category= category,
-        defaults={
-            "rating_type":rating,
-        }
-    )
+    with transaction.atomic():
+        record= GameCategoryRating.objects.filter(user= request.user, game=game, category=category).first()
+        # check record present or not
+        if record:
+            # click on selected rating (delete)
+            if record.rating_type_id == rating_id:
+                record.delete()
+                action="deleted"
+            # clicked on another rating    
+            else:
+                updated_rating= get_object_or_404(RatingType, id=rating_id)
+                record.rating_type= updated_rating
+                record.save()
+                action="saved"
+        else:
+            new_rating= get_object_or_404(RatingType, id=rating_id)
+            GameCategoryRating.objects.create(
+                user=request.user,
+                game=game,
+                category=category,
+                rating_type=new_rating
+            )
+            action="saved"
     return JsonResponse({
         "success":True,
+        "action":action,
         "category": category.key,
         "category_avg": game.category_average(category.key),
         "category_breakdown": game.category_breakdown(category),
-        
-    })
+    })        
+            
                  
