@@ -6,11 +6,23 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.http import JsonResponse
 from django.db import transaction
+from django.core.paginator import Paginator
 import json
+from django.utils import timezone
+from datetime import datetime
+from django.http import HttpResponse
+
+def check_time(request):
+    pytime= datetime.now()
+    djtime= timezone.make_aware(datetime.now())
+    return HttpResponse(f"pytime:{pytime}, djangotime:{djtime}, {pytime.tzinfo}, {djtime.tzinfo}")
 
 @login_required
 def games_list(request):
-    games= Game.objects.all()
+    games= Game.objects.all().order_by("-released")
+    paginator= Paginator(games, 20)
+    page_number= request.GET.get("page")
+    games_page= paginator.get_page(page_number)
     # wishlist
     wishlist_games=WishList.objects.filter(user=request.user).values_list("game_id", flat=True)
     # library
@@ -32,7 +44,7 @@ def games_list(request):
         category_rating.setdefault(r.game_id, {})[r.category_id] = r.rating_type_id
     
     return render(request, "games/games.html", 
-                  {"games":games,
+                  {"games":games_page,
                    "wishlist_games": wishlist_games,
                    "statuses":statuses,
                    "library_games":library_games,

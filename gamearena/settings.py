@@ -144,3 +144,10 @@ LOGOUT_REDIRECT_URL = "/"
 # for internal dynamic images (user/ admin may upload  ex: game images)
 MEDIA_URL= "/media/"
 MEDIA_ROOT= os.path.join(BASE_DIR, "media")
+
+# IGDB configurations
+IGDB_CLIENT_ID = env("IGDB_CLIENT_ID")
+IGDB_CLIENT_SECRET = env("IGDB_CLIENT_SECRET")
+IGDB_AUTH_URL = env("IGDB_AUTH_URL", default="https://id.twitch.tv/oauth2/token")
+IGDB_API_URL = env("IGDB_API_URL", default="https://api.igdb.com/v4")
+

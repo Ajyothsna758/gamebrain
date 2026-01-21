@@ -6,6 +6,7 @@ from django.core.validators import FileExtensionValidator
 # Create your models here.   
     
 class Game(models.Model):
+    igdb_id= models.PositiveBigIntegerField(unique=True, null=True, blank=True)
     name= models.CharField(max_length=255)
     developer= models.CharField(max_length=255)
     publisher= models.CharField(max_length=255)
@@ -14,7 +15,9 @@ class Game(models.Model):
     main_sides= models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     completion= models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     description=models.TextField(blank=True)
-    released= models.DateField(auto_now=False, blank=True)
+    released= models.DateField(null=True, blank=True)
+    igdb_updated_at= models.DateTimeField(blank=True, null=True)
+    cover_url= models.URLField(blank=True, null=True)
     #rating   
     def overall_average(self):
         avg= self.overall_ratings.aggregate(avg=Avg("rating_type__weight"))["avg"]
@@ -174,4 +177,6 @@ class UserLibrary(models.Model):
     def __str__(self):
         return f"{self.user}: {self.game}"
        
-                
+# IGDB sync check
+class IGDBSyncStatus(models.Model):
+    last_updated_at=models.DateTimeField(null=True, blank=True)              

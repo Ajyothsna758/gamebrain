@@ -9,4 +9,16 @@
         {% endfor %}
     </div>
 </div>
+
+<div class="pagination">
+    {% if games.has_previous %}
+        <a href="?page={{ games.previous_page_number }}">Previous</a>
+    {% endif %}
+
+    <span>Page {{ games.number }} of {{ games.paginator.num_pages }}</span>
+
+    {% if games.has_next %}
+        <a href="?page={{ games.next_page_number }}">Next</a>
+    {% endif %}
+</div>
 {% endblock %}

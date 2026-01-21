@@ -1,7 +1,11 @@
 {% load static %}
 {% load dict_extras %}
 <div class="game-card" data-game="{{ game.id }}">
-        <img src="{{ game.image.url }}" alt="{{ game.name }}" class="game-image">
+        {% if game.cover_url %}
+             <img src="{{ game.cover_url }}" alt="{{ game.name }}" class="game-image">
+        {% else %}
+             <img src="/static/img/no-cover.png" alt="No-cover" class="game-image">   
+        {% endif %}       
         <div>
             <h3>
                 {{ game.name }} 

@@ -10,6 +10,8 @@ pillow = "*"
 python-decouple = "*"
 mysqlclient = "*"
 django-environ = "*"
+requests = "*"
+pytz = "*"
 
 [dev-packages]
 
