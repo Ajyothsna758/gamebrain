@@ -7,16 +7,8 @@ from django.views.decorators.http import require_POST
 from django.http import JsonResponse
 from django.db import transaction
 from django.core.paginator import Paginator
-import json
-from django.utils import timezone
-from datetime import datetime
-from django.http import HttpResponse
 
-def check_time(request):
-    pytime= datetime.now()
-    djtime= timezone.make_aware(datetime.now())
-    return HttpResponse(f"pytime:{pytime}, djangotime:{djtime}, {pytime.tzinfo}, {djtime.tzinfo}")
-
+# games
 @login_required
 def games_list(request):
     games= Game.objects.all().order_by("-released")
@@ -215,3 +207,32 @@ def save_category_rating(request):
     })        
             
                  
+# search
+def game_search_autocomplete(request):
+    word = request.GET.get("word", "").strip()
+    games = (Game.objects.filter(name__icontains=word).only("id", "name", "cover_url", "igdb_id"))[:10]
+    data= [{
+        "id": game.id,
+        "name": game.name,
+        "igdb_id": game.igdb_id,
+        "cover_url": game.cover_url
+    }
+           for game in games
+           ]
+    return JsonResponse(data, safe=False)
+
+def game_search(request):
+    search = request.GET.get("search", "").strip()
+    print(search)
+    games_page = Game.objects.none()
+    results= 0
+    if search:
+        games = Game.objects.filter(name__icontains=search)
+        paginator= Paginator(games, 20)
+        page_number= request.GET.get("page")
+        games_page= paginator.get_page(page_number) 
+        results= games.count()
+           
+    return render(request, "games/search_games.html",{"games":games_page, "search":search, "count":results })
+
+    

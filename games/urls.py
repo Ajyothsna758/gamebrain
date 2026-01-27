@@ -11,6 +11,6 @@ urlpatterns=[
     path("library/status/<int:status_id>/", views.library, name="library_by_status"),
     path("save_overall_rating", views.save_overall_rating, name="save_overall_rating"),
     path("save_category_rating", views.save_category_rating, name="save_category_rating"),
-    path("1/", views.check_time),
-    
+    path("search/", views.game_search, name="game_search"),
+    path("autocomplete/", views.game_search_autocomplete, name="game_search_autocomplete"),    
 ]

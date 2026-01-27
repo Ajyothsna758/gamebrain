@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="page-container">
+    <h4>you searched for {{ search }} found {{ count }} games</h4>
+    {% if games %}
+        <div class="games-grid">
+            {% for game in games %}
+                {% include 'partials/card.html' with game=game %}
+            {% endfor %}
+        </div>
+    {% else %}
+        <h1>No games found for your search</h1>
+    {% endif %}
+</div>
+
+<div class="pagination">
+    {% if games.has_previous %}
+        <a href="?search={{ search }}&page={{ games.previous_page_number }}">Previous</a>
+    {% endif %}
+
+    <span>Page {{ games.number }} of {{ games.paginator.num_pages }}</span>
+
+    {% if games.has_next %}
+        <a href="?search={{ search }}&page={{ games.next_page_number }}">Next</a>
+    {% endif %}
+</div>
+
+{% endblock %}
+
