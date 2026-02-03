@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'userpanel',
     'games',
+    'rest_framework',
+    'recommendations',
 ]
 
 MIDDLEWARE = [
@@ -150,4 +152,14 @@ IGDB_CLIENT_ID = env("IGDB_CLIENT_ID")
 IGDB_CLIENT_SECRET = env("IGDB_CLIENT_SECRET")
 IGDB_AUTH_URL = env("IGDB_AUTH_URL", default="https://id.twitch.tv/oauth2/token")
 IGDB_API_URL = env("IGDB_API_URL", default="https://api.igdb.com/v4")
+
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.BrowsableAPIRenderer',
+        'rest_framework.renderers.JSONRenderer',
+    ),
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ]
+}
 

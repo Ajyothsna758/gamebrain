@@ -5,13 +5,13 @@ name = "pypi"
 
 [packages]
 django = "*"
-djangorestframework = "*"
 pillow = "*"
 python-decouple = "*"
 mysqlclient = "*"
 django-environ = "*"
 requests = "*"
 pytz = "*"
+djangorestframework = "*"
 
 [dev-packages]
 

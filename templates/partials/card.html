@@ -16,6 +16,26 @@
         </div>
             
             <p>{{ game.released }}</p>
+            <div>
+                <h3>genres</h3>
+                {% if game.genres.exists %}
+                {% for genre in game.genres.all %}
+                <li>{{ genre.name }}</li>
+                {% endfor %}
+                {% else %}
+                <p>no genres</p>
+                {% endif %}
+            </div>
+            <div>
+                <h3>platforms</h3>
+                {% if game.platforms.exists %}
+                {% for platform in game.platforms.all %}
+                <li>{{ platform.name }}</li>
+                {% endfor %}
+                {% else %}
+                <p>no platforms</p>
+                {% endif %}
+            </div>
             <a href="{% url 'wishlist_toggle' game.id %}">
                 {% if game.id in wishlist_games %}
                     <img src="{% static 'img/icons/w_add.svg' %}" alt="added to wishlist" class="wishlist-icon-add">

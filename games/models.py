@@ -11,14 +11,14 @@ class Genre(models.Model):
     name = models.CharField(max_length=255)  
     slug = models.SlugField(max_length=255) 
     def __str__(self):
-        return f"{self.name}: {self.igdb_id}"
+        return self.name
 
 class GameMode(models.Model):
     igdb_id = models.PositiveBigIntegerField(unique=True)
     name = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255)
     def __str__(self):
-        return f"{self.name}: {self.igdb_id}"  
+        return self.name  
 
 class Platform(models.Model):
     igdb_id = models.PositiveBigIntegerField(unique=True)
@@ -27,35 +27,35 @@ class Platform(models.Model):
     abbreviation = models.CharField(max_length=255)
     alternative_name = models.CharField(max_length=255)
     def __str__(self):
-        return f"{self.name}: {self.igdb_id}" 
+        return self.name 
 
 class Franchise(models.Model):
     igdb_id = models.PositiveBigIntegerField(unique=True)
     name = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255)
     def __str__(self):
-        return f"{self.name}: {self.igdb_id}" 
+        return self.name
 
 class PlayerPerspective(models.Model):
     igdb_id = models.PositiveBigIntegerField(unique=True)
     name = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255)
     def __str__(self):
-        return f"{self.name}: {self.igdb_id}"  
+        return self.name 
     
 class Theme(models.Model):
     igdb_id = models.PositiveBigIntegerField(unique=True)
     name = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255)
     def __str__(self):
-        return f"{self.name}: {self.igdb_id}"   
+        return self.name  
 
 class Keyword(models.Model):
     igdb_id = models.PositiveBigIntegerField(unique=True)
     name = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255)
     def __str__(self):
-        return f"{self.name}: {self.igdb_id}"    
+        return self.name    
     
 class Collection(models.Model):
     igdb_id = models.PositiveBigIntegerField(unique=True)
@@ -133,7 +133,7 @@ class Game(models.Model):
                 "percentage":round((r.count / total)*100, 1)
             }
             for r in ratings
-        ]
+        ]   
     
     def overall_label(self):
         avg = self.overall_average()
@@ -144,7 +144,7 @@ class Game(models.Model):
         elif avg >= 1.5:
             return "Average"
         return "Skip"
-    
+
     def overall_rating_image(self):
         if not self.overall_ratings.exists():
             return None
