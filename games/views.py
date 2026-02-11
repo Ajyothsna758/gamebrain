@@ -65,10 +65,27 @@ def wishlist(request):
     wishlist_items= WishList.objects.filter(user=request.user).select_related("game")
     wishlist_games= wishlist_items.values_list("game_id", flat=True)
     library_games= UserLibrary.objects.filter(user=request.user).values_list("game_id",flat=True)
+    # rating
+    rating_types= RatingType.objects.all()
+    overall_rating = {
+        r.game_id: r.rating_type_id for r in GameOverallRating.objects.filter(user=request.user)
+    }
+    categories= RatingCategory.objects.all()
+    # category_rating= {
+    #     (r.game_id, r.category_id): r.rating_type_id for r in GameCategoryRating.objects.filter(user=request.user)
+    # }
+    category_rating = {}
+    for r in GameCategoryRating.objects.filter(user=request.user):
+        category_rating.setdefault(r.game_id, {})[r.category_id] = r.rating_type_id
+    
     return render(request, "games/wishlist.html", 
                   {"wishlist_games": wishlist_games,
                    "wishlist_items":wishlist_items,
                    "library_games": library_games,
+                   "rating_types":rating_types,
+                   "overall_rating":overall_rating,
+                   "category_rating":category_rating,
+                   "categories":categories,
                    }) 
     
        
@@ -113,12 +130,28 @@ def library(request, status_id=None):
     statuses= GameStatus.objects.all()
     if status_id:
         library_items=library_items.filter(status_id=status_id)
+    # rating
+    rating_types= RatingType.objects.all()
+    overall_rating = {
+        r.game_id: r.rating_type_id for r in GameOverallRating.objects.filter(user=request.user)
+    }
+    categories= RatingCategory.objects.all()
+    # category_rating= {
+    #     (r.game_id, r.category_id): r.rating_type_id for r in GameCategoryRating.objects.filter(user=request.user)
+    # }
+    category_rating = {}
+    for r in GameCategoryRating.objects.filter(user=request.user):
+        category_rating.setdefault(r.game_id, {})[r.category_id] = r.rating_type_id    
     return render(request, "games/library.html",{
         "statuses":statuses,
         "library_items":library_items,
         "library_games":library_games,
         "active_status":status_id,
         "wishlist_games": wishlist_games,
+        "rating_types":rating_types,
+        "overall_rating":overall_rating,
+        "category_rating":category_rating,
+        "categories":categories,
     })  
     
 #  overall ratings
@@ -231,8 +264,36 @@ def game_search(request):
         paginator= Paginator(games, 20)
         page_number= request.GET.get("page")
         games_page= paginator.get_page(page_number) 
+        # wishlist
+        wishlist_games=WishList.objects.filter(user=request.user).values_list("game_id", flat=True)
+        # library
+        statuses= GameStatus.objects.all()
+        library_games= {
+            lg.game_id: lg for lg in UserLibrary.objects.filter(user=request.user) 
+        }
+        # rating
+        rating_types= RatingType.objects.all()
+        overall_rating = {
+            r.game_id: r.rating_type_id for r in GameOverallRating.objects.filter(user=request.user)
+        }
+        categories= RatingCategory.objects.all()
+        # category_rating= {
+        #     (r.game_id, r.category_id): r.rating_type_id for r in GameCategoryRating.objects.filter(user=request.user)
+        # }
+        category_rating = {}
+        for r in GameCategoryRating.objects.filter(user=request.user):
+            category_rating.setdefault(r.game_id, {})[r.category_id] = r.rating_type_id
         results= games.count()
            
-    return render(request, "games/search_games.html",{"games":games_page, "search":search, "count":results })
-
+    return render(request, "games/search_games.html",{
+        "games":games_page, 
+        "wishlist_games": wishlist_games,
+        "statuses":statuses,
+        "library_games":library_games,
+        "rating_types":rating_types,
+        "overall_rating":overall_rating,
+        "category_rating":category_rating,
+        "categories":categories,
+        "search":search, 
+        "count":results })
     

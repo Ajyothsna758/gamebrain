@@ -4,8 +4,10 @@
     <a href="{% url 'games' %}" style="text-decoration: none; color: black;">Games</a>
     <a href="{% url 'wishlist' %}" style="text-decoration: none; color: black;">Wish List</a>
     <a href="{% url 'library' %}" style="text-decoration: none; color: black;">Library</a>
-    <a href="{% url 'recommendations:cold-start' %}" style="text-decoration: none; color: black;">Recommendations</a>
+    <a href="{% url 'recommendations:recommendation' %}" style="text-decoration: none; color: black;">Recommendations</a>
     <a href="{% url 'logout' %}" style="text-decoration: none; color: black;">Logout</a>
+    {% comment %} <a href="{% url 'recommended' %}" style="text-decoration: none; color: black;">check</a> {% endcomment %}
+
     
 
     {% else %}

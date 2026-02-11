@@ -50,14 +50,14 @@ def onboarding_preferences(request):
         if "skip" in request.POST:
             prefer.completed_onboarding = True 
             prefer.save()
-            return redirect("recommendations:cold-start")
+            return redirect("recommendations:recommendation")
         prefer.preferred_genres.set(request.POST.getlist("genres")) 
         prefer.preferred_platform.set(request.POST.getlist("platforms")) 
         prefer.preferred_player_perspective.set(request.POST.getlist("player_perspectives")) 
         prefer.preferred_themes.set(request.POST.getlist("themes"))
         prefer.completed_onboarding = True
         prefer.save()
-        return redirect("recommendations:cold-start")
+        return redirect("recommendations:recommendation")
     return render(request, "user/onboarding_preferences.html",{
         "genres": Genre.objects.all(),
         "platforms": Platform.objects.all(),

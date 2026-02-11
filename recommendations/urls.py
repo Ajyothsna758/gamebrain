@@ -1,7 +1,8 @@
 from django.urls import path
-from .views import NewUserGameRecommendationAPIView
+from . import views
 
 app_name = "recommendations"
 urlpatterns=[
-    path("api/recommendations/cold-start/", NewUserGameRecommendationAPIView.as_view(), name="cold-start"),
+    path("recommendations/", views.GameRecommendationAPIView.as_view(), name="recommendation"),
+    path("api/recommendations/", views.ExistingUserRecommendationsAPIView.as_view(), name="recommended")
 ]
