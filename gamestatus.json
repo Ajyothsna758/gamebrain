@@ -1,0 +1,47 @@
+[
+    {
+    "model": "games.gamestatus",
+    "pk": 1,
+    "fields": {
+        "name": "Uncategorized",
+        "description": "I'll pick or select category later",
+        "image": "status_icons/uncategorized.svg"
+    }
+},
+{
+    "model": "games.gamestatus",
+    "pk": 2,
+    "fields": {
+        "name": "Not played",
+        "description": "I'll play it later",
+        "image": "status_icons/notplayed.svg"
+    }
+},
+{
+    "model": "games.gamestatus",
+    "pk": 3,
+    "fields": {
+        "name": "Currently playing",
+        "description": "I play the game regularly",
+        "image": "status_icons/playing_PQdUd2Z.svg"
+    }
+},
+{
+    "model": "games.gamestatus",
+    "pk": 4,
+    "fields": {
+        "name": "Dropped",
+        "description": "I gave up and won't play it anymore",
+        "image": "status_icons/dropped.svg"
+    }
+},
+{
+    "model": "games.gamestatus",
+    "pk": 5,
+    "fields": {
+        "name": "Completed",
+        "description": "I reach my goal in the game",
+        "image": "status_icons/completed.svg"
+    }
+}
+]

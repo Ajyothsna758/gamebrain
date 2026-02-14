@@ -1,0 +1,42 @@
+[
+{
+  "model": "games.ratingcategory",
+  "pk": 1,
+  "fields": {
+    "name": "Gameplay",
+    "key": "gameplay"
+  }
+},
+{
+  "model": "games.ratingcategory",
+  "pk": 2,
+  "fields": {
+    "name": "Visual",
+    "key": "visual"
+  }
+},
+{
+  "model": "games.ratingcategory",
+  "pk": 3,
+  "fields": {
+    "name": "Audio",
+    "key": "audio"
+  }
+},
+{
+  "model": "games.ratingcategory",
+  "pk": 4,
+  "fields": {
+    "name": "Story",
+    "key": "story"
+  }
+},
+{
+  "model": "games.ratingcategory",
+  "pk": 5,
+  "fields": {
+    "name": "Playability",
+    "key": "playability"
+  }
+}
+]

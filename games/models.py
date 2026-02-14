@@ -87,7 +87,7 @@ class Game(models.Model):
     igdb_rating_count = models.IntegerField(null=True, blank=True)
     total_rating = models.FloatField(null=True, blank=True, db_index=True)
     total_rating_count = models.IntegerField(null=True, blank=True)
-    igdb_url = models.URLField(null=True, blank=True)
+    igdb_url = models.URLField(max_length=500, null=True, blank=True)
     #ref fields
     genres = models.ManyToManyField(Genre, related_name="games", blank=True)
     game_modes = models.ManyToManyField(GameMode, related_name="games", blank=True)
