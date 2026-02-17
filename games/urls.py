@@ -2,7 +2,7 @@ from django.urls import path
 from . import views
 
 urlpatterns=[
-    path("games/", views.games_list, name="games"),
+    path("", views.games_list, name="games"),
     path("wishlist/toggle/<int:game_id>/", views.toggle_wishlist, name="wishlist_toggle"),
     path("wishlist/", views.wishlist, name="wishlist"),
     path("library/toggle/<int:game_id>/", views.toggle_library, name="library_toggle"),
@@ -12,5 +12,6 @@ urlpatterns=[
     path("save_overall_rating", views.save_overall_rating, name="save_overall_rating"),
     path("save_category_rating", views.save_category_rating, name="save_category_rating"),
     path("search/", views.game_search, name="game_search"),
-    path("autocomplete/", views.game_search_autocomplete, name="game_search_autocomplete"),    
+    path("autocomplete/", views.game_search_autocomplete, name="game_search_autocomplete"),  
+    path("game/<int:id>/", views.game_detail, name="game-detail"),  
 ]

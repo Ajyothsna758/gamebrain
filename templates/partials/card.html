@@ -1,5 +1,6 @@
 {% load static %}
 {% load dict_extras %}
+{% csrf_token %}
 <div class="game-card" data-game="{{ game.id }}">
         {% if game.cover_url %}
              <img src="{{ game.cover_url }}" alt="{{ game.name }}" class="game-image">
@@ -8,7 +9,11 @@
         {% endif %}       
         <div>
             <h3>
-                {{ game.name }} 
+                <a href="{% url 'game-detail' game.id %}" 
+                   style="text-decoration: none; font-size: 200x;"
+                   class="text-hover">
+                    {{ game.name }}
+                </a>
                 {% if game.overall_rating_image %}
                     <img src="{{ game.overall_rating_image }}" alt="avg rating image" class="rating-image" id="game-{{ game.id }}-rating_image">
                 {% endif %}
@@ -320,4 +325,5 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
 
-</script>
+</script>                   
+

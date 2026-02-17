@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import Avg, Count
 from django.core.validators import FileExtensionValidator
+from django.utils.timezone import now
 
 # Create your models here.   
 
@@ -181,7 +182,16 @@ class Game(models.Model):
             }
             for r in ratings
         ]
-        
+    @property
+    def game_age(self):
+        today=now().date()
+        if not self.released or self.released> today:
+            return None
+        years= today.year - self.released.year 
+        if (today.month, today.day) < (self.released.month, self.released.day):
+            years -= 1
+        return years    
+                
     def __str__(self):
         return self.name
     

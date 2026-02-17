@@ -138,9 +138,9 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # for user panel (login, logout, sigup)
-LOGIN_URL = "/"
-LOGIN_REDIRECT_URL = "/games/"
-SIGNUP_REDIRECT_URL = "/games/"
+LOGIN_URL = "/sign-up/"
+LOGIN_REDIRECT_URL = "/"
+SIGNUP_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 
 # for internal dynamic images (user/ admin may upload  ex: game images)

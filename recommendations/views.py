@@ -131,7 +131,7 @@ class ExistingUserRecommendationsAPIView(APIView):
 
         serializer = RecommendationSerializer(rec_objs, many=True)
         end=time.time()
-        print(end - start)
+        print("time", end - start)
        
         return Response(serializer.data)
     

@@ -14,6 +14,10 @@ def set_many2many(game, model, igdb_ids, field_name):
 def sec_to_hr(sec):
     return round(Decimal(sec)/Decimal(3600), 2) if sec else None
 
+def chunk_list(lst, size=50):
+    for i in range(0, len(lst), size):
+        yield lst[i:i + size]
+
 RELEASE_TS_2009= 1230768000
 LIMIT= 500
     
@@ -117,6 +121,7 @@ class Command(BaseCommand):
                 set_many2many(game, Game, item.get("similar_games"), "similar_games")
                 developer_ids=[]
                 publisher_ids=[]
+                game_ids.append(igdb_id) 
                 for c in item.get("involved_companies", []):
                     company_id= c.get("company")
                     if not company_id:
@@ -132,24 +137,31 @@ class Command(BaseCommand):
                 total+=1
                 self.stdout.write(f"{'added' if created else 'updated'}: {game.name}")
             if game_ids:
-                ttb_query = f"""
-                fields game_id, hastily, normally, completely;
-                where game_id = ({', '.join(map(str, game_ids))})
-                """    
+                self.stdout.write(f"Fetching TTB for {len(game_ids)} games")
+
+        for chunk in chunk_list(game_ids, 50):   # 50 is safe
+            ttb_query = f"""
+            fields game, hastily, normally, completely;
+            where game = ({', '.join(map(str, chunk))});
+            """
+            try:
                 ttb_data = get_igdb_data("game_time_to_beats", ttb_query)
-                for ttb in ttb_data:
-                    try:
-                        game = Game.objects.get(igdb_id=ttb["game_id"])
-                    except Game.DoesNotExist:
-                        continue
-                    GameTimeToBeat.objects.update_or_create(
-                        game = game,
-                        defaults = {
-                            "main_story":sec_to_hr(ttb.get("hastily")),
-                            "main_sides":sec_to_hr(ttb.get("normally")),
-                            "completion":sec_to_hr(ttb.get("completely")),
-                        }
-                    ) 
+            except Exception as e:
+                self.stdout.write(f"TTB fetch failed for chunk: {e}")
+                continue
+            for ttb in ttb_data:
+                try:
+                    game = Game.objects.get(igdb_id=ttb["game"])
+                except Game.DoesNotExist:
+                    continue
+                GameTimeToBeat.objects.update_or_create(
+                    game=game,
+                    defaults={
+                        "main_story": sec_to_hr(ttb.get("hastily")),
+                        "main_sides": sec_to_hr(ttb.get("normally")),
+                        "completion": sec_to_hr(ttb.get("completely")),
+                    }
+                )
             offset +=LIMIT
             time.sleep(0.3)    
         if highest > last_ts:                 

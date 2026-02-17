@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="game-detail"
+     style="background-image: url('{% if game.cover_url %}{{ game.cover_url }}{% else %}{% static 'img/no-cover.png' %}{% endif %}');">
+
+    <div class="image-dim"></div>
+    <div class="content">
+        <h2>This is game detail page</h2>
+        <div class="game-name">
+            <h1>{{ game.name }}</h1>
+        </div>
+        <h1>{{ game.released }} {% if game.game_age %}({{ game.game_age }} years ago){% else %}{% endif %}</h1>
+        <div>
+                <a href="{% url 'wishlist_toggle' game.id %}" class="wishlist-btn-detail">
+                {% if is_wishlisted %}
+                    <button class="wishlist-added">
+                        <img src="{% static 'img/icons/w_add.svg' %}" alt="added to wishlist" class="wishlist-icon-remove">
+                        Added to Wishlist {{ wishlist_count }}
+                    </button>
+                    
+                {% else %}
+                    <button class="wishlist-add">
+                        <img src="{% static 'img/icons/w_add.svg' %}" alt="remove from wishlist" class="wishlist-icon-remove">
+                        Add to Wishlist {{ wishlist_count }}
+                    </button>
+                    
+                {% endif %}
+                </a>
+        </div>
+        
+    </div>
+</div>
+
+
+
+{% endblock %}

@@ -38,7 +38,7 @@ def homelogin_view(request):
 def logout_view(request):
     logout(request)
     messages.success(request, "Logout successfully")
-    return redirect("home")
+    return redirect("login")
 
 
    

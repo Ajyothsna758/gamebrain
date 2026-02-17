@@ -9,33 +9,33 @@ from django.db import transaction
 from django.core.paginator import Paginator
 
 # games
-@login_required
+
 def games_list(request):
     games= Game.objects.all().order_by("-released")
     paginator= Paginator(games, 20)
     page_number= request.GET.get("page")
     games_page= paginator.get_page(page_number)
-    # wishlist
-    wishlist_games=WishList.objects.filter(user=request.user).values_list("game_id", flat=True)
-    # library
-    statuses= GameStatus.objects.all()
-    library_games= {
-        lg.game_id: lg for lg in UserLibrary.objects.filter(user=request.user) 
-    }
-    # rating
-    rating_types= RatingType.objects.all()
-    overall_rating = {
-        r.game_id: r.rating_type_id for r in GameOverallRating.objects.filter(user=request.user)
-    }
-    categories= RatingCategory.objects.all()
-    # category_rating= {
-    #     (r.game_id, r.category_id): r.rating_type_id for r in GameCategoryRating.objects.filter(user=request.user)
-    # }
-    category_rating = {}
-    for r in GameCategoryRating.objects.filter(user=request.user):
-        category_rating.setdefault(r.game_id, {})[r.category_id] = r.rating_type_id
-    
-    return render(request, "games/games.html", 
+    if request.user.is_authenticated:
+        # wishlist
+        wishlist_games=WishList.objects.filter(user=request.user).values_list("game_id", flat=True)
+        # library
+        statuses= GameStatus.objects.all()
+        library_games= {
+            lg.game_id: lg for lg in UserLibrary.objects.filter(user=request.user) 
+        }
+        # rating
+        rating_types= RatingType.objects.all()
+        overall_rating = {
+            r.game_id: r.rating_type_id for r in GameOverallRating.objects.filter(user=request.user)
+        }
+        categories= RatingCategory.objects.all()
+        # category_rating= {
+        #     (r.game_id, r.category_id): r.rating_type_id for r in GameCategoryRating.objects.filter(user=request.user)
+        # }
+        category_rating = {}
+        for r in GameCategoryRating.objects.filter(user=request.user):
+            category_rating.setdefault(r.game_id, {})[r.category_id] = r.rating_type_id    
+        return render(request, "games/games.html", 
                   {"games":games_page,
                    "wishlist_games": wishlist_games,
                    "statuses":statuses,
@@ -45,6 +45,9 @@ def games_list(request):
                    "category_rating":category_rating,
                    "categories":categories,
                    })
+    return render(request, "games/games.html", 
+                  {"games":games_page,
+                  })    
     
    
 
@@ -297,3 +300,15 @@ def game_search(request):
         "search":search, 
         "count":results })
     
+def game_detail(request, id):
+    game= get_object_or_404(Game, id=id)
+    wishlist_count = WishList.objects.filter(game=game).count()
+    if request.user.is_authenticated:
+        is_wishlisted = WishList.objects.filter(game=game, user=request.user).exists()
+    else:
+        is_wishlisted = False
+    return render(request, "games/game_detail.html", 
+                  {"game":game,
+                   "wishlist_count":wishlist_count,
+                    "is_wishlisted": is_wishlisted
+                   })
