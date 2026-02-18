@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% comment %} {% extends 'base.html' %}
 {% load static %}
 {% block content %}
 
@@ -13,7 +13,7 @@
         </div>
         <h1>{{ game.released }} {% if game.game_age %}({{ game.game_age }} years ago){% else %}{% endif %}</h1>
         <div>
-                <a href="{% url 'wishlist_toggle' game.id %}" class="wishlist-btn-detail">
+                <a href="{% url 'wishlist_toggle' %}" class="wishlist-btn-detail">
                 {% if is_wishlisted %}
                     <button class="wishlist-added">
                         <img src="{% static 'img/icons/w_add.svg' %}" alt="added to wishlist" class="wishlist-icon-remove">
@@ -35,4 +35,4 @@
 
 
 
-{% endblock %}
+{% endblock %} {% endcomment %}

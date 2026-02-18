@@ -85,35 +85,35 @@ class GameRecommendationAPIView(APIView):
         games_page = paginator.get_page(page_number)
         #wishlist
         wishlist_games=WishList.objects.filter(user=request.user).values_list("game_id", flat=True)
-        # library
-        statuses= GameStatus.objects.all()
-        library_games= {
-            lg.game_id: lg for lg in UserLibrary.objects.filter(user=request.user) 
-        }
-        # rating
-        rating_types= RatingType.objects.all()
-        overall_rating = {
-            r.game_id: r.rating_type_id for r in GameOverallRating.objects.filter(user=request.user)
-        }
-        categories= RatingCategory.objects.all()
-        # category_rating= {
-        #     (r.game_id, r.category_id): r.rating_type_id for r in GameCategoryRating.objects.filter(user=request.user)
+        # # library
+        # statuses= GameStatus.objects.all()
+        # library_games= {
+        #     lg.game_id: lg for lg in UserLibrary.objects.filter(user=request.user) 
         # }
-        category_rating = {}
-        for r in GameCategoryRating.objects.filter(user=request.user):
-            category_rating.setdefault(r.game_id, {})[r.category_id] = r.rating_type_id
+        # # rating
+        # rating_types= RatingType.objects.all()
+        # overall_rating = {
+        #     r.game_id: r.rating_type_id for r in GameOverallRating.objects.filter(user=request.user)
+        # }
+        # categories= RatingCategory.objects.all()
+        # # category_rating= {
+        # #     (r.game_id, r.category_id): r.rating_type_id for r in GameCategoryRating.objects.filter(user=request.user)
+        # # }
+        # category_rating = {}
+        # for r in GameCategoryRating.objects.filter(user=request.user):
+        #     category_rating.setdefault(r.game_id, {})[r.category_id] = r.rating_type_id
         return Response(
                   {"games":games_page,
                    "wishlist_games": wishlist_games,
-                   "statuses":statuses,
-                   "library_games":library_games,
-                   "rating_types":rating_types,
-                   "overall_rating":overall_rating,
-                   "category_rating":category_rating,
-                   "categories":categories,
+                #    "statuses":statuses,
+                #    "library_games":library_games,
+                #    "rating_types":rating_types,
+                #    "overall_rating":overall_rating,
+                #    "category_rating":category_rating,
+                #    "categories":categories,
                    })
 
-#### existing users API view:
+# #### existing users API view:
 class ExistingUserRecommendationsAPIView(APIView):
     permission_classes = [IsAuthenticated]
     pagination_class = RecommendationPagination
