@@ -30,60 +30,21 @@
             </div>
             <img src="{% static 'img/icons/w_add.svg' %}" 
                  alt="wishlist"
-                 class="wishlist-icon {% if game.id in wishlist_games %}active{% endif %}">
-
+                 class="wishlist-icon {% if game.id in wishlist_games %}active{% endif %}"
+                 data-url="{% url 'wishlist_toggle' %}">
+            
+            {% if game.id in library_games %}     
+            <img src="{% static 'img/icons/library_add.svg' %}" 
+                 alt="library"
+                 class="library-icon"
+                 data-url="{% url 'library_toggle' game.id %}">
+            {% else %} 
+             <img src="{% static 'img/icons/library_remove.svg' %}" 
+                 alt="library"
+                 class="library-icon"
+                 data-url="{% url 'library_toggle' game.id %}">   
+            {% endif %}      
+    
 </div>
 
-<script>
-    function getCookie(name) {
-        let cookieValue = null;
-        if(document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for(let cookie of cookies) {
-                cookie = cookie.trim();
-                if(cookie.startsWith(name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-    const csrftoken = getCookie('csrftoken');
-    // wishlist
-    document.addEventListener('DOMContentLoaded', function() {
-        const wishlist_icon = document.querySelectorAll('.wishlist-icon');
-        wishlist_icon.forEach(icon => {
-            icon.addEventListener('click', function() {
-                const game_card = icon.closest('.game-card'); //fetch parent game card
-                const gameId = game_card.dataset.gameId; // game id from selected game card
-                fetch("{% url 'wishlist_toggle' %}", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/x-www-form-urlencoded",
-                        "X-CSRFToken": csrftoken
-                    },
-                    body: new URLSearchParams({game_id: gameId})
-                })
-                .then(response => {
-                    if (response.redirected){
-                        window.location.href = response.url;
-                        return;
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.status === "added") {
-                        icon.classList.add('active');
-                    } else if (data.status === "removed") {
-                        icon.classList.remove('active');
-                    } else {
-                        console.log(data.message);
-                    }
-                })
-                .catch(err => console.error(err));
-            });
-        });
-    });
-</script>
 

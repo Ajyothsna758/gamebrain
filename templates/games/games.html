@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% csrf_token %}
 {% block content %}
 <div class="page-container">
     <h2>This is games page</h2>
@@ -22,4 +23,5 @@
     {% endif %}
 </div>
 {% endblock %}
+
 

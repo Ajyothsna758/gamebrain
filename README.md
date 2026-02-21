@@ -16,7 +16,7 @@
     - If the game is already in the wishlist → delete entry → return `{"status": "removed"}`
   - Stores wishlist entries in `WishList` model with `user` and `game` fields.
   - Added wishlist tab to display WishListed games.
-## __Frontend JavaScript__
+- __Frontend JavaScript__
   - Listens for clicks on .wishlist-icon.
   - Sends a POST request to the backend with the game_id.
   - Includes the CSRF token for security.

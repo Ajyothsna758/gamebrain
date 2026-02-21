@@ -9,7 +9,6 @@ from django.db import transaction
 from django.core.paginator import Paginator
 
 # games
-
 def games_list(request):
     games= Game.objects.all().order_by("-released")
     paginator= Paginator(games, 20)
@@ -18,11 +17,11 @@ def games_list(request):
     if request.user.is_authenticated:
         # wishlist
         wishlist_games=WishList.objects.filter(user=request.user).values_list("game_id", flat=True)
-        # # library
-        # statuses= GameStatus.objects.all()
-        # library_games= {
-        #     lg.game_id: lg for lg in UserLibrary.objects.filter(user=request.user) 
-        # }
+        # library
+        statuses= GameStatus.objects.all()
+        library_games= {
+            lg.game_id: lg for lg in UserLibrary.objects.filter(user=request.user) 
+        }
         # # rating
         # rating_types= RatingType.objects.all()
         # overall_rating = {
@@ -37,8 +36,8 @@ def games_list(request):
         #     category_rating.setdefault(r.game_id, {})[r.category_id] = r.rating_type_id    
         return render(request, "games/games.html",  {"games":games_page,
                    "wishlist_games": wishlist_games,
-                #    "statuses":statuses,
-                #    "library_games":library_games,
+                   "statuses":statuses,
+                   "library_games":library_games,
                 #    "rating_types":rating_types,
                 #    "overall_rating":overall_rating,
                 #    "category_rating":category_rating,
@@ -59,6 +58,7 @@ def toggle_wishlist(request):
             game = Game.objects.get(id=game_id)
         except Game.DoesNotExist:
             return JsonResponse({"status": "error", "message": "Game Not found"})
+        UserLibrary.objects.filter(user=request.user, game=game).delete()
         wishlist_game, created = WishList.objects.get_or_create(user=request.user, game=game)
         if not created: 
             wishlist_game.delete()
@@ -96,70 +96,76 @@ def wishlist(request):
                    }) 
     
        
-# ### My Library
-# @login_required
-# def toggle_library(request, game_id):
-#     game= get_object_or_404(Game, id=game_id)
-#     status=get_object_or_404(GameStatus, name__iexact="Uncategorized")
-#     WishList.objects.filter(user=request.user, game=game).delete()
-#     obj, created= UserLibrary.objects.get_or_create(
-#         user=request.user,
-#         game=game,
-#         defaults={
-#             "status": status
-#         } 
-#     )
-#     if not created:
-#         obj.delete()
-#     return redirect(request.META.get("HTTP_REFERER", "games"))    
+### My Library
+@login_required(login_url="/login/")
+def toggle_library(request, game_id):
+    if request.method=="POST":
+        game = get_object_or_404(Game, id=game_id)
+        status=get_object_or_404(GameStatus, name__iexact="Uncategorized")
+        WishList.objects.filter(user=request.user, game=game).delete()
+        obj, created= UserLibrary.objects.get_or_create(
+            user=request.user,
+            game=game,
+            defaults={
+                "status": status
+            } 
+        )
+        if not created:
+            obj.delete()
+            return JsonResponse({"in_library": False})
+        return JsonResponse({"in_library": True})
+    return JsonResponse({"error":"Invalid request"}, status=400)   
 
-# @login_required
-# def update_library_status(request, game_id, status_id):
-#     game=get_object_or_404(Game, id=game_id)
-#     status=get_object_or_404(GameStatus, id=status_id)
-#     library, _= UserLibrary.objects.get_or_create(
-#         user=request.user,
-#         game=game,
-#         defaults={
-#             "status":status
-#         }
-#     )
-#     library.status= status
-#     library.save()
-#     return redirect(request.META.get("HTTP_REFERER", "games"))
+@login_required
+def update_library_status(request, game_id, status_id):
+    if request.method=="POST":
+        game=get_object_or_404(Game, id=game_id)
+        status=get_object_or_404(GameStatus, id=status_id)
+        library, _= UserLibrary.objects.get_or_create(
+            user=request.user,
+            game=game
+            )
+        library.status= status
+        library.save()
+        return JsonResponse({
+            "success": True,
+            "status_name": status.name,
+            "status_icon": status.image.url
+        })
+    return JsonResponse({"error":"Invalid request"}, status=400)
       
 
-# @login_required
-# def library(request, status_id=None):
-#     library_items= UserLibrary.objects.filter(user=request.user).select_related("game", "status")
-#     library_games= library_items.values_list("game_id", flat=True)
-#     wishlist_games=WishList.objects.filter(user=request.user).values_list("game_id", flat=True)
-#     statuses= GameStatus.objects.all()
-#     if status_id:
-#         library_items=library_items.filter(status_id=status_id)
-#     # rating
-#     rating_types= RatingType.objects.all()
-#     overall_rating = {
-#         r.game_id: r.rating_type_id for r in GameOverallRating.objects.filter(user=request.user)
-#     }
-#     categories= RatingCategory.objects.all()
-#     # category_rating= {
-#     #     (r.game_id, r.category_id): r.rating_type_id for r in GameCategoryRating.objects.filter(user=request.user)
-#     # }
-#     category_rating = {}
-#     for r in GameCategoryRating.objects.filter(user=request.user):
-#         category_rating.setdefault(r.game_id, {})[r.category_id] = r.rating_type_id    
-#     return render(request, "games/library.html",{
-#         "statuses":statuses,
-#         "library_items":library_items,
-#         "library_games":library_games,
-#         "active_status":status_id,
-#         "wishlist_games": wishlist_games,
-#         "rating_types":rating_types,
-#         "overall_rating":overall_rating,
-#         "category_rating":category_rating,
-#         "categories":categories,
-#     })  
+@login_required
+def library(request, status_id=None):
+    library_items= UserLibrary.objects.filter(user=request.user).select_related("game", "status")
+    library_games= library_items.values_list("game_id", flat=True)
+    wishlist_games=WishList.objects.filter(user=request.user).values_list("game_id", flat=True)
+    statuses= GameStatus.objects.all()
+    if status_id:
+        library_items=library_items.filter(status_id=status_id)
+    # rating
+    rating_types= RatingType.objects.all()
+    overall_rating = {
+        r.game_id: r.rating_type_id for r in GameOverallRating.objects.filter(user=request.user)
+    }
+    categories= RatingCategory.objects.all()
+    # category_rating= {
+    #     (r.game_id, r.category_id): r.rating_type_id for r in GameCategoryRating.objects.filter(user=request.user)
+    # }
+    category_rating = {}
+    for r in GameCategoryRating.objects.filter(user=request.user):
+        category_rating.setdefault(r.game_id, {})[r.category_id] = r.rating_type_id    
+    return render(request, "games/library.html",{
+        "statuses":statuses,
+        "library_items":library_items,
+        "library_games":library_games,
+        "active_status":status_id,
+        "wishlist_games": wishlist_games,
+        "rating_types":rating_types,
+        "overall_rating":overall_rating,
+        "category_rating":category_rating,
+        "categories":categories,
+    })  
     
 # #  overall ratings
 # @login_required
