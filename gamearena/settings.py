@@ -137,7 +137,7 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-# for user panel (login, logout, sigup)
+# for user panel (login, logout, signup)
 LOGIN_URL = "/sign-up/"
 LOGIN_REDIRECT_URL = "/"
 SIGNUP_REDIRECT_URL = "/"

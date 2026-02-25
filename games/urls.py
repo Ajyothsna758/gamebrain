@@ -9,6 +9,7 @@ urlpatterns=[
     path("update-status/<int:game_id>/<int:status_id>/", views.update_library_status, name="update_status"),
     path("library/", views.library, name="library"),
     path("library/status/<int:status_id>/", views.library, name="library_by_status"),
+    path("remove-library/<int:game_id>/", views.remove_from_library, name="remove_library"),
     # path("save_overall_rating", views.save_overall_rating, name="save_overall_rating"),
     # path("save_category_rating", views.save_category_rating, name="save_category_rating"),
     path("search/", views.game_search, name="game_search"),

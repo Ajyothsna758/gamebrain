@@ -85,11 +85,11 @@ class GameRecommendationAPIView(APIView):
         games_page = paginator.get_page(page_number)
         #wishlist
         wishlist_games=WishList.objects.filter(user=request.user).values_list("game_id", flat=True)
-        # # library
-        # statuses= GameStatus.objects.all()
-        # library_games= {
-        #     lg.game_id: lg for lg in UserLibrary.objects.filter(user=request.user) 
-        # }
+        # library
+        library_items= UserLibrary.objects.filter(user=request.user)
+        statuses= GameStatus.objects.all()
+        library_games= { lg.game_id: lg for lg in library_items }
+        library_status= { ls.game_id: ls.status_id for ls in library_items }
         # # rating
         # rating_types= RatingType.objects.all()
         # overall_rating = {
@@ -105,8 +105,9 @@ class GameRecommendationAPIView(APIView):
         return Response(
                   {"games":games_page,
                    "wishlist_games": wishlist_games,
-                #    "statuses":statuses,
-                #    "library_games":library_games,
+                   "statuses":statuses,
+                   "library_games":library_games,
+                   "library_status":library_status,
                 #    "rating_types":rating_types,
                 #    "overall_rating":overall_rating,
                 #    "category_rating":category_rating,
