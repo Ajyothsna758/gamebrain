@@ -14,6 +14,8 @@ def games_list(request):
     paginator= Paginator(games, 20)
     page_number= request.GET.get("page")
     games_page= paginator.get_page(page_number)
+    rating_types= RatingType.objects.all()
+    categories= RatingCategory.objects.all()
     if request.user.is_authenticated:
         # wishlist
         wishlist_games=WishList.objects.filter(user=request.user).values_list("game_id", flat=True)
@@ -26,30 +28,31 @@ def games_list(request):
         print("library_items:", library_items)
         print("library_games:", library_games)
         print("library_status:", library_status)
-        # # rating
-        # rating_types= RatingType.objects.all()
-        # overall_rating = {
-        #     r.game_id: r.rating_type_id for r in GameOverallRating.objects.filter(user=request.user)
+        # rating
+        overall_rating = {
+            r.game_id: r.rating_type_id for r in GameOverallRating.objects.filter(user=request.user)
+        }
+        # category_rating= {
+        #     (r.game_id, r.category_id): r.rating_type_id for r in GameCategoryRating.objects.filter(user=request.user)
         # }
-        # categories= RatingCategory.objects.all()
-        # # category_rating= {
-        # #     (r.game_id, r.category_id): r.rating_type_id for r in GameCategoryRating.objects.filter(user=request.user)
-        # # }
-        # category_rating = {}
-        # for r in GameCategoryRating.objects.filter(user=request.user):
-        #     category_rating.setdefault(r.game_id, {})[r.category_id] = r.rating_type_id    
+        category_rating = {}
+        for r in GameCategoryRating.objects.filter(user=request.user):
+            category_rating.setdefault(r.game_id, {})[r.category_id] = r.rating_type_id    
         return render(request, "games/games.html",  {"games":games_page,
                    "wishlist_games": wishlist_games,
                    "statuses":statuses,
                    "library_games":library_games,
                    "library_status":library_status,
-                #    "rating_types":rating_types,
-                #    "overall_rating":overall_rating,
-                #    "category_rating":category_rating,
-                #    "categories":categories,
+                   "rating_types":rating_types,
+                   "overall_rating":overall_rating,
+                   "category_rating":category_rating,
+                   "categories":categories,
                    }) 
-        
-    return render(request, "games/games.html",  {"games":games_page})    
+    return render(request, "games/games.html",  
+                  {"games":games_page,
+                   "rating_types":rating_types,
+                   "categories":categories
+                   })    
     
    
 
@@ -163,8 +166,6 @@ def update_library_status(request, game_id, status_id):
 
 @login_required
 def library(request, status_id=None):
-    # library_items= UserLibrary.objects.filter(user=request.user).select_related("game", "status")
-    # library_games= library_items.values_list("game_id", flat=True)
     library_items= UserLibrary.objects.filter(user=request.user)
     library_games= { lg.game_id: lg for lg in library_items }
     library_status= { ls.game_id: ls.status_id for ls in library_items }
@@ -197,90 +198,89 @@ def library(request, status_id=None):
         "categories":categories,
     })  
     
-# #  overall ratings
-# @login_required
-# @require_POST
-# def save_overall_rating(request):
-#     game_id= request.POST.get("game_id")
-#     rating_id= request.POST.get("rating_id")
-    
-#     game= get_object_or_404(Game, id=game_id)
-#     rating_id= int(rating_id) #ensure rating_id is integer for comparison
-    
-#     # save whole block at once in db (to avoid partial records)
-#     with transaction.atomic():
-#         record=GameOverallRating.objects.filter(user=request.user, game=game).first()
-#         # check record is present or not in table
-#         if record:
-#             if record.rating_type_id == rating_id:
-#                 # user clicked on active button (delete)
-#                 record.delete()
-#                 action="deleted"
-#             else:
-#                 # user clicked on another button (update) 
-#                 updated_rating= get_object_or_404(RatingType, id=rating_id)
-#                 record.rating_type= updated_rating
-#                 record.save()
-#                 action="saved"
-#         else:
-#             new_rating= get_object_or_404(RatingType, id=rating_id) 
-#             GameOverallRating.objects.create(
-#                 user=request.user,
-#                 game=game,
-#                 rating_type=new_rating
-#             )  
-#             action="saved" 
-#     return JsonResponse({
-#         "success": True,
-#         "action": action,
-#         "avg":game.overall_average(),
-#         "label":game.overall_label(),
-#         "breakdown": game.overall_breakdown(),
-#         "rating_image":game.overall_rating_image(),
-#     })    
+#  overall ratings
+@login_required(login_url="/login/")
+def save_overall_rating(request):
+    if request.method=="POST":
+        game_id= request.POST.get("game_id")
+        rating_id= request.POST.get("rating_id")    
+        game= get_object_or_404(Game, id=game_id)
+        rating_id= int(rating_id)   
+        # save whole block at once in db (to avoid partial records)
+        with transaction.atomic():
+            record=GameOverallRating.objects.filter(user=request.user, game=game).first()
+            # check record is present or not in table
+            if record:
+                if record.rating_type_id == rating_id:
+                    # user clicked on active button (delete)
+                    record.delete()
+                    action="deleted"
+                else:
+                    # user clicked on another button (update) 
+                    updated_rating= get_object_or_404(RatingType, id=rating_id)
+                    record.rating_type= updated_rating
+                    record.save()
+                    action="saved"
+            else:
+                new_rating= get_object_or_404(RatingType, id=rating_id) 
+                GameOverallRating.objects.create(
+                    user=request.user,
+                    game=game,
+                    rating_type=new_rating
+                )  
+                action="saved" 
+        return JsonResponse({
+            "success": True,
+            "action": action,
+            "avg":game.overall_average(),
+            "label":game.overall_label(),
+            "breakdown": game.overall_breakdown(),
+            "rating_image":game.overall_rating_image(),
+        })
+    return JsonResponse({"error": "Invalid request"}, status=400)     
+   
 
 # category rating               
-# @login_required
-# @require_POST
-# def save_category_rating(request):
-#     game_id= request.POST.get("game_id")
-#     rating_id= request.POST.get("rating_id") 
-#     category_id= request.POST.get("category_id")
-    
-#     game= get_object_or_404(Game, id=game_id)
-#     category= get_object_or_404(RatingCategory, id=category_id)
-#     rating_id= int(rating_id)
-    
-#     with transaction.atomic():
-#         record= GameCategoryRating.objects.filter(user= request.user, game=game, category=category).first()
-#         # check record present or not
-#         if record:
-#             # click on selected rating (delete)
-#             if record.rating_type_id == rating_id:
-#                 record.delete()
-#                 action="deleted"
-#             # clicked on another rating    
-#             else:
-#                 updated_rating= get_object_or_404(RatingType, id=rating_id)
-#                 record.rating_type= updated_rating
-#                 record.save()
-#                 action="saved"
-#         else:
-#             new_rating= get_object_or_404(RatingType, id=rating_id)
-#             GameCategoryRating.objects.create(
-#                 user=request.user,
-#                 game=game,
-#                 category=category,
-#                 rating_type=new_rating
-#             )
-#             action="saved"
-#     return JsonResponse({
-#         "success":True,
-#         "action":action,
-#         "category": category.key,
-#         "category_avg": game.category_average(category.key),
-#         "category_breakdown": game.category_breakdown(category),
-#     })        
+@login_required(login_url="/login/")
+def save_category_rating(request):
+    if request.method=="POST":
+        game_id= request.POST.get("game_id")
+        rating_id= request.POST.get("rating_id") 
+        category_id= request.POST.get("category_id")       
+        game= get_object_or_404(Game, id=game_id)
+        category= get_object_or_404(RatingCategory, id=category_id)
+        rating_id= int(rating_id)        
+        with transaction.atomic():
+            record= GameCategoryRating.objects.filter(user= request.user, game=game, category=category).first()
+            # check record present or not
+            if record:
+                # click on selected rating (delete)
+                if record.rating_type_id == rating_id:
+                    record.delete()
+                    action="deleted"
+                # clicked on another rating    
+                else:
+                    updated_rating= get_object_or_404(RatingType, id=rating_id)
+                    record.rating_type= updated_rating
+                    record.save()
+                    action="saved"
+            else:
+                new_rating= get_object_or_404(RatingType, id=rating_id)
+                GameCategoryRating.objects.create(
+                    user=request.user,
+                    game=game,
+                    category=category,
+                    rating_type=new_rating
+                )
+                action="saved"
+        return JsonResponse({
+            "success":True,
+            "action":action,
+            "category": category.key,
+            "category_avg": game.category_average(category.key),
+            "category_breakdown": game.category_breakdown(category),
+        })   
+    return JsonResponse({"error": "Invalid request"}, status=400)         
             
                  
 # search
@@ -308,6 +308,8 @@ def game_search(request):
         page_number= request.GET.get("page")
         games_page= paginator.get_page(page_number) 
         results= games.count()
+        rating_types= RatingType.objects.all()
+        categories= RatingCategory.objects.all()
         if request.user.is_authenticated:
             # # wishlist
             wishlist_games=WishList.objects.filter(user=request.user).values_list("game_id", flat=True)
@@ -316,27 +318,25 @@ def game_search(request):
             library_games= {
                 lg.game_id: lg for lg in UserLibrary.objects.filter(user=request.user) 
             }
-            # # rating
-            # rating_types= RatingType.objects.all()
-            # overall_rating = {
-            #     r.game_id: r.rating_type_id for r in GameOverallRating.objects.filter(user=request.user)
+            # rating            
+            overall_rating = {
+                r.game_id: r.rating_type_id for r in GameOverallRating.objects.filter(user=request.user)
+            }
+            # category_rating= {
+            #     (r.game_id, r.category_id): r.rating_type_id for r in GameCategoryRating.objects.filter(user=request.user)
             # }
-            # categories= RatingCategory.objects.all()
-            # # category_rating= {
-            # #     (r.game_id, r.category_id): r.rating_type_id for r in GameCategoryRating.objects.filter(user=request.user)
-            # # }
-            # category_rating = {}
-            # for r in GameCategoryRating.objects.filter(user=request.user):
-            #     category_rating.setdefault(r.game_id, {})[r.category_id] = r.rating_type_id
+            category_rating = {}
+            for r in GameCategoryRating.objects.filter(user=request.user):
+                category_rating.setdefault(r.game_id, {})[r.category_id] = r.rating_type_id
             return render(request, "games/search_games.html",{
                 "games":games_page, 
                 "wishlist_games": wishlist_games,
                 "statuses":statuses,
                 "library_games":library_games,
-                # "rating_types":rating_types,
-                # "overall_rating":overall_rating,
-                # "category_rating":category_rating,
-                # "categories":categories,
+                "rating_types":rating_types,
+                "overall_rating":overall_rating,
+                "category_rating":category_rating,
+                "categories":categories,
                 "search":search, 
                 "count":results
             })
@@ -344,7 +344,9 @@ def game_search(request):
     return render(request, "games/search_games.html",{
         "games":games_page,
         "search":search, 
-        "count":results
+        "count":results,
+        "rating_types":rating_types,
+        "categories":categories,
         })
     
 # def game_detail(request, id):

@@ -181,4 +181,125 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll(".library-popup")
             .forEach(p => p.classList.remove("show"));
     }
+    // rating
+    // open and close popup
+    function openPopup(popup) {
+        popup.classList.add("active");
+    }
+    function closePopup(popup) {
+        popup.classList.remove("active");
+    }
+    // open popup on "Rate" button click
+    document.querySelectorAll(".rating-btn").forEach(btn => {
+        btn.addEventListener("click", function(e) {
+            e.stopPropagation(); // prevent document click from closing popup
+            const gameId = this.dataset.game;
+            const popup = document.getElementById(`popup-${gameId}`);
+            // close library popup
+            closeAllPopups();
+            // close currently opened model before opening another model
+            document.querySelectorAll(".rating-wrapper.active").forEach(activePopup => {
+                if (activePopup != popup){
+                    closePopup(activePopup);
+                }
+            });
+            if(popup) openPopup(popup);
+        });
+    });
+    // close popup on "X" button click
+    document.querySelectorAll(".rating-wrapper .popup-close").forEach(btn => {
+        btn.addEventListener("click", function(e) {
+            e.stopPropagation();
+            const popup = this.closest(".rating-wrapper");
+            closePopup(popup);
+        });
+    });
+    // close popup if clicking outside
+    document.addEventListener("click", function(e) {
+        document.querySelectorAll(".rating-wrapper.active").forEach(popup => {
+            // If click is outside the popup and outside the "Rate" button
+            if(!popup.contains(e.target) && !e.target.classList.contains("rating-btn") && !popup.closest(".library-popup")) {
+                closePopup(popup);
+            }
+        });
+    });
+    document.addEventListener("click", function(e) {
+        // overall rating
+        const overallBtn = e.target.closest(".overall-btn");
+        if (overallBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            const gameId = overallBtn.dataset.game;
+            const ratingId = overallBtn.dataset.rating;
+            const popup = document.getElementById(`popup-${gameId}`);
+            const url = popup.dataset.overallUrl;
+            fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "X-CSRFToken": csrftoken
+                },
+                body: new URLSearchParams({
+                    game_id: gameId,
+                    rating_id: ratingId
+                })
+            })
+            .then(response => {
+                if (response.redirected){
+                    window.location.href = response.url;
+                    return;
+                }
+                return response.json();
+                })
+            .then(data => {
+                if (!data.success) return;
+                popup.querySelectorAll(".overall-btn").forEach(b => b.classList.remove("active"));
+                if (data.action === "saved") {
+                    overallBtn.classList.add("active");
+                }
+                document.getElementById(`game-${gameId}-avg`).textContent = data.avg;
+                document.getElementById(`game-${gameId}-label`).textContent = data.label;
+            });
+        }
+        // category rating
+        const categoryBtn = e.target.closest(".category-btn");
+        if (categoryBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            const gameId = categoryBtn.dataset.game;
+            const ratingId = categoryBtn.dataset.rating;
+            const categoryId = categoryBtn.dataset.category;
+            const popup = document.getElementById(`popup-${gameId}`);
+            const url = popup.dataset.categoryUrl;
+            fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "X-CSRFToken": csrftoken
+                },
+                body: new URLSearchParams({
+                    game_id: gameId,
+                    rating_id: ratingId,
+                    category_id: categoryId
+                })
+            })
+            .then(response => {
+                if (response.redirected){
+                    window.location.href = response.url;
+                    return;
+                }
+                return response.json();
+                })
+            .then(data => {
+                if (!data.success) return;
+                const block = categoryBtn.closest(".category-block");
+                block.querySelectorAll(".category-btn").forEach(b => b.classList.remove("active"));
+                if (data.action === "saved") {
+                    categoryBtn.classList.add("active");
+                }
+                const avgEl = document.getElementById(`avg-${gameId}-${data.category}`);
+                if (avgEl) avgEl.textContent = data.category_avg;
+            });
+        }
+    });
 });

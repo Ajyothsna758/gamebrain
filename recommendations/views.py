@@ -90,28 +90,28 @@ class GameRecommendationAPIView(APIView):
         statuses= GameStatus.objects.all()
         library_games= { lg.game_id: lg for lg in library_items }
         library_status= { ls.game_id: ls.status_id for ls in library_items }
-        # # rating
-        # rating_types= RatingType.objects.all()
-        # overall_rating = {
-        #     r.game_id: r.rating_type_id for r in GameOverallRating.objects.filter(user=request.user)
+        # rating
+        rating_types= RatingType.objects.all()
+        overall_rating = {
+            r.game_id: r.rating_type_id for r in GameOverallRating.objects.filter(user=request.user)
+        }
+        categories= RatingCategory.objects.all()
+        # category_rating= {
+        #     (r.game_id, r.category_id): r.rating_type_id for r in GameCategoryRating.objects.filter(user=request.user)
         # }
-        # categories= RatingCategory.objects.all()
-        # # category_rating= {
-        # #     (r.game_id, r.category_id): r.rating_type_id for r in GameCategoryRating.objects.filter(user=request.user)
-        # # }
-        # category_rating = {}
-        # for r in GameCategoryRating.objects.filter(user=request.user):
-        #     category_rating.setdefault(r.game_id, {})[r.category_id] = r.rating_type_id
+        category_rating = {}
+        for r in GameCategoryRating.objects.filter(user=request.user):
+            category_rating.setdefault(r.game_id, {})[r.category_id] = r.rating_type_id
         return Response(
                   {"games":games_page,
                    "wishlist_games": wishlist_games,
                    "statuses":statuses,
                    "library_games":library_games,
                    "library_status":library_status,
-                #    "rating_types":rating_types,
-                #    "overall_rating":overall_rating,
-                #    "category_rating":category_rating,
-                #    "categories":categories,
+                   "rating_types":rating_types,
+                   "overall_rating":overall_rating,
+                   "category_rating":category_rating,
+                   "categories":categories,
                    })
 
 # #### existing users API view:

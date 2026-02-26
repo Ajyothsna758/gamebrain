@@ -28,6 +28,37 @@
           <p>no platforms</p>
           {% endif %}
      </div>
+     <div class="overall-rating">
+            <strong id="game-{{ game.id }}-label ">{{ game.overall_label }}</strong>
+            <span id="game-{{ game.id }}-avg">{{ game.overall_average }}</span>
+     </div>
+     <div class="category-avg-check">
+            {% for category in categories %}
+                {{ category.name }}
+                (<span id="avg-{{ game.id }}-{{ category.key }}">{{ game|category_average_filter:category.key }}</span>)
+            {% endfor %}
+     </div>
+     <div class="rating-bar" id="overall-bar-{{ game.id }}">
+            {% if game.overall_breakdown %}
+                {% for r in game.overall_breakdown %}
+                    {% if r.id %}
+                        <div class="segment" style="width: {{ r.percentage }}%; background: {{ r.color }}" >
+                        {% if r.image %}
+                        <img src="{{ r.image }}" alt="{{ r.name }}" class="rating-image">
+                        {% endif %}
+                    </div>
+                    {% else %}
+                        <div class="segment" style="width: 100%; background: grey">
+                            <span>no reviews</span>
+                        </div>
+                    {% endif %}  
+                {% endfor %}
+            {% else %}
+                 <div class="segment" style="width: 100%; background: grey">
+                        <span>no reviews</span>
+                 </div>         
+            {% endif %}
+        </div>
      <div class="game-buttons">
           <img src="{% static 'img/icons/w_add.svg' %}" 
                  alt="wishlist"
@@ -45,7 +76,7 @@
                     <div class="library-popup">
                          <div class="popup-header">
                               <span>Update Status</span>
-                              <span class="popup-close">X</span>
+                              <button class="popup-close">X</button>
                          </div>
                          {% for status in statuses %}
                               <div class="status-item {% if library_status|get_item:game.id == status.id %}active{% endif %}"
@@ -64,10 +95,48 @@
                          </div>
                     </div>
                {% endif %}
-
-          </div>            
-     </div>
-                           
+          </div> 
+          
+          <button class="rating-btn" data-game= "{{ game.id }}"> Rate</button>             
+          <div class="rating-wrapper" 
+               id="popup-{{ game.id }}"
+               data-overall-url="{% url 'save_overall_rating' %}"
+               data-category-url="{% url 'save_category_rating' %}">
+               <div class="rating-popup">
+                    <div class="popup-header">
+                         <span>Overall Rating</span>
+                         <button class="popup-close">X</button>
+                    </div>
+                    <div class="rating-grid">
+                         {% for rate in rating_types %}
+                              <button  type="button" class="rate-btn overall-btn 
+                                   {% if overall_rating|get_item:game.id == rate.id %}active{% endif %}"
+                                   data-game="{{ game.id }}"
+                                   data-rating="{{ rate.id }}">
+                                   <img src="{{ rate.image.url }}" alt="{{ rate.name }}" width="24">
+                                   {{ rate.name }}
+                              </button>
+                         {% endfor %}
+                    </div>
+                    <hr>
+                    <div class="category-model">
+                         {% for category in categories %}
+                              <div class="category-block">
+                                   <div class="category-name">{{ category.name }}</div>
+                                   {% for rate in rating_types %}
+                                   <button  type="button" class="rate-btn category-btn
+                                        {% if category_rating|get_item:game.id|get_item:category.id == rate.id %}active{% endif %}"
+                                        data-game="{{ game.id }}"
+                                        data-rating="{{ rate.id }}"
+                                        data-category="{{ category.id }}">                       
+                                        <img src="{{ rate.image.url }}" alt="{{ rate.category_rating_name }}" width="24">
+                                   </button>          
+                                   {% endfor %}
+                              </div>
+                         {% endfor %}
+                    </div>
+               </div>
+          </div>         
+     </div>     
 </div>
-
 

@@ -23,8 +23,15 @@
   - Handles redirect to login if the user is not authenticated.
   - Updates the icon dynamically to show the current status.
 # User Library Feature:
-- Enable users to add or remove games from their User Library **without reloading the page** and also user can choose different status like Uncategorized, Not played, Currently playing, Completed and Dropped
+- Enable users to add or remove games from their User Library **without reloading the page**
+- Users can choose different statuses for games in their library like:
+  - Uncategorized
+  - Not played
+  - Currently playing
+  - Completed 
+  - Dropped
 - Clicking the library icon toggles the game in the database and updates the icon in real-time for logged-in users.
+- Clicking the library icon while logged out redirects the user to the login page.
 - - Implemented using Django, JavaScript, and AJAX:
   - Backend: Django views handle toggle, status update, and removal logic. Used Django Template Language (DTL) to render dynamic library and status data on the frontend.
   - Frontend: JavaScript fetch API sends POST requests and updates the icon dynamically.
@@ -55,5 +62,30 @@
 - Wishlist and Library are mutually exclusive:
   - Adding to Wishlist removes it from Library.
   - Adding to Library removes it from Wishlist.
+# Rating Feature:
+- Enable users to rate games by clicking the Rate button on each game card.
+- Clicking on the rate button -> popup opens for both logged-in users and anonymous or new users.
+- Only authenticated users can submit ratings.
+- Instead of using a traditional star‑based rating system, users  can choose from distinct rating types: 
+  - Recommended
+  - Excellent
+  - Average
+  - Skip
+- Ratings are split into:
+  - Overall Rating
+  - Category Ratings (Gameplay, Visual, Audio, Story and Playability)
+- Rating selections update the UI instantly and persist in the database without a page reload.
+## Features:
+### 1. Overall Rating:
+- Clicking the "Rate" button opens the rating modal below the button
+- Users can rate a game using predefined rating types (e.g., Excellent, Good, Average).
+- Clicking the same rating type again removes it (toggle behavior).
+- Clicking a different rating updates the existing one.
+- The average rating and label update dynamically.
+### 2. Category- Based Rating:
+- Users can rate specific categories independently.
+- Ratings are sent via AJAX fetch() requests to Django backend endpoints.
+- CSRF tokens are included to secure the POST requests.
+- Each category maintains its own average.
 # Search Functionality:
 - when user search with game name related all game names are displayed
