@@ -1,3 +1,19 @@
+# Run with Docker
+### 1. Clone  the repo:
+```
+git clone git@github.com:Ajyothsna758/gamebrain.git
+cd gamebrain
+
+```
+### 2. create .env file:
+`cp .env.example .env`
+### 3. Start containers
+```
+docker compose down -v
+docker compose up --build
+```
+### 4. Access the app
+`http://localhost:8000`
 # WishList Feature:
 - Enable users to add or remove games from their personal wishlist **without reloading the page**. This improves user experience and provides real-time feedback.
 ## Features:

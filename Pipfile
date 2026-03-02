@@ -12,6 +12,7 @@ django-environ = "*"
 requests = "*"
 pytz = "*"
 djangorestframework = "*"
+gunicorn = "*"
 
 [dev-packages]
 
