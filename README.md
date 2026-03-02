@@ -1,19 +1,27 @@
 # Run with Docker
-### 1. Clone  the repo:
+#### 1. Clone  the repo:
 ```
 git clone git@github.com:Ajyothsna758/gamebrain.git
 cd gamebrain
 
 ```
-### 2. create .env file:
-`cp .env.example .env`
-### 3. Start containers
+#### 2. create .env file:
 ```
-docker compose down -v
-docker compose up --build
+cp .env.example .env
 ```
-### 4. Access the app
-`http://localhost:8000`
+#### 3. Start containers
+```
+sudo docker compose down -v
+sudo docker compose up --build
+```
+#### 4. Access the app
+```
+http://localhost:8000
+```
+# Game Tracking & Recommendations Application using Django + Mysql
+- Fetch data from IGDB API
+- Developed wishlist, library and rating functionality for games
+- Recommended games for new and existing users
 # WishList Feature:
 - Enable users to add or remove games from their personal wishlist **without reloading the page**. This improves user experience and provides real-time feedback.
 ## Features:
@@ -105,3 +113,42 @@ docker compose up --build
 - Each category maintains its own average.
 # Search Functionality:
 - when user search with game name related all game names are displayed
+
+# Recommendations Feature:
+## For New Users
+- for new users I used __Rule-based / content-based__ recommendations
+- new users can select their preferences at onboarding:
+  - Genres (RPG, Music, Action…)
+  - Platforms (PC, PS5…)
+  - Player perspectives (First-person, Third-person…)
+  - Themes (Fantasy, Music…)
+- for recommendations filter the games based on these preferences and sort them by rating (total_rating) as a score.
+### Process:
+- While user sign up or register (New user)
+  - users can select their preferences(genres, platform, theme, plater_perspectives)
+    - If user select his/her choices:
+     - based on that choices display with high rated and recently released games
+    - If user skip his/her choices:
+     - high rated and recently released games are recommended
+### Development:
+- Created `UserPreference` model to store user preferred genres, platform, player perspective, theme and completed_onboarding flag
+- created `onboarding_preferences` view to select preferences by user after sign up
+- created related urls and templates
+- created recommendations logic
+  - If user selected his/her favorite genres filter the games with same genres and did same for remaining fields
+  - If user didn't selected preferences ordered the games with rating and related fields
+- Showed game recommendations in recommendations page  
+
+## For Existing Users
+- For existing users games recommendations I used __content based__ recommendations
+- It suggests similar games based on wishlist and library games.
+- This system uses games meta data like genres, platforms, player perspective, franchise, themes, game mode, developer and publisher
+- The general idea behind these recommender systems is that if a person likes a particular game, he or she will also like an game that is similar to it.
+### Development:
+- First, I extracted user interactions such as library games, ratings, and wishlist using the `get_user_seed_games` function.
+- Extracted structured metadata from a user’s seed games, which we use to build a user preference profile for content-based recommendations.
+- Found all candidate games that match the user’s preferences
+- Calculated a relevance score for a game based on how well it matches the user’s preferences, and provide reasons for the recommendation.
+- Generated personalized game recommendations for an existing user based on the games they have previously interacted with
+- Showed game recommendations in recommendations page
+
