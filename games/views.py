@@ -70,8 +70,10 @@ def toggle_wishlist(request):
         wishlist_game, created = WishList.objects.get_or_create(user=request.user, game=game)
         if not created: 
             wishlist_game.delete()
-            return JsonResponse({"status": "removed"})
-        return JsonResponse({"status": "added"})
+            wishlist_count= WishList.objects.filter(game=game).count()
+            return JsonResponse({"status": "removed", "wishlist_count":wishlist_count})
+        wishlist_count= WishList.objects.filter(game=game).count()
+        return JsonResponse({"status": "added", "wishlist_count":wishlist_count})
     return JsonResponse({"status": "error", "message": "Invalid Request"})
 
  
@@ -348,16 +350,49 @@ def game_search(request):
         "rating_types":rating_types,
         "categories":categories,
         })
+
+# game details:    
+def game_detail(request, id):
+    game= get_object_or_404(Game, id=id)
+    if request.user.is_authenticated:
+        is_wishlisted = WishList.objects.filter(game=game, user=request.user).exists()
+        wishlist_games = WishList.objects.filter(user=request.user).values_list("game_id", flat=True)
+        library_items= UserLibrary.objects.filter(user=request.user)
+        library_games= { lg.game_id: lg for lg in library_items }
+        library_status= { ls.game_id: ls.status_id for ls in library_items }
+        overall_rating = {
+            r.game_id: r.rating_type_id for r in GameOverallRating.objects.filter(user=request.user)
+        }
+        # category_rating= {
+        #     (r.game_id, r.category_id): r.rating_type_id for r in GameCategoryRating.objects.filter(user=request.user)
+        # }
+        category_rating = {}
+        for r in GameCategoryRating.objects.filter(user=request.user):
+            category_rating.setdefault(r.game_id, {})[r.category_id] = r.rating_type_id 
     
-# def game_detail(request, id):
-#     game= get_object_or_404(Game, id=id)
-#     wishlist_count = WishList.objects.filter(game=game).count()
-#     if request.user.is_authenticated:
-#         is_wishlisted = WishList.objects.filter(game=game, user=request.user).exists()
-#     else:
-#         is_wishlisted = False
-#     return render(request, "games/game_detail.html", 
-#                   {"game":game,
-#                    "wishlist_count":wishlist_count,
-#                     "is_wishlisted": is_wishlisted
-#                    })
+    else:
+        is_wishlisted = False
+        wishlist_games = []
+        library_games = []
+        overall_rating = {}
+        category_rating = {}
+        library_status = {}
+    similar_games = game.similar_games.all()[:6]
+    categories = RatingCategory.objects.all()
+    statuses = GameStatus.objects.all()
+    rating_types = RatingType.objects.all()
+
+     
+    return render(request, "games/game_detail.html", 
+                  {"game":game,
+                    "is_wishlisted": is_wishlisted,
+                    "wishlist_games": wishlist_games,
+                    "statuses":statuses,
+                    "library_games":library_games,
+                    "library_status":library_status,
+                    "rating_types":rating_types,
+                    "overall_rating":overall_rating,
+                    "category_rating":category_rating,
+                    "categories":categories,
+                    "similar_games":similar_games,
+                   })

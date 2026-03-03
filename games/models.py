@@ -100,7 +100,7 @@ class Game(models.Model):
     collections = models.ManyToManyField(Collection, related_name="games", blank=True)
     developer = models.ManyToManyField(Company, related_name="developed_games", blank=True)
     publisher = models.ManyToManyField(Company, related_name="published_games", blank=True)
-    similar_games = models.ManyToManyField('self', null=True, blank=True)
+    similar_games = models.ManyToManyField('self', blank=True)
        
     #rating   
     def overall_average(self):

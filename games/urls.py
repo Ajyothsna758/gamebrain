@@ -14,5 +14,5 @@ urlpatterns=[
     path("save_category_rating", views.save_category_rating, name="save_category_rating"),
     path("search/", views.game_search, name="game_search"),
     # path("autocomplete/", views.game_search_autocomplete, name="game_search_autocomplete"),  
-    # path("game/<int:id>/", views.game_detail, name="game-detail"),  
+    path("game/<int:id>/", views.game_detail, name="game-detail"),  
 ]

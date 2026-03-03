@@ -11,4 +11,4 @@ echo "MySQL started"
 python manage.py migrate
 python manage.py collectstatic --noinput
 
-gunicorn gamearena.wsgi:application --bind 0.0.0.0:8000
+gunicorn gamearena.wsgi:application --bind 0.0.0.0:8000 --reload

@@ -1,38 +1,164 @@
-{% comment %} {% extends 'base.html' %}
+{% extends 'base.html' %}
 {% load static %}
+{% load dict_extras %}
+{% csrf_token %}
 {% block content %}
 
 <div class="game-detail"
-     style="background-image: url('{% if game.cover_url %}{{ game.cover_url }}{% else %}{% static 'img/no-cover.png' %}{% endif %}');">
-
+    style="background-image: url('{% if game.cover_url %}{{ game.cover_url }}{% else %}{% static 'img/no-cover.png' %}{% endif %}');">
     <div class="image-dim"></div>
     <div class="content">
         <h2>This is game detail page</h2>
         <div class="game-name">
             <h1>{{ game.name }}</h1>
         </div>
-        <h1>{{ game.released }} {% if game.game_age %}({{ game.game_age }} years ago){% else %}{% endif %}</h1>
-        <div>
-                <a href="{% url 'wishlist_toggle' %}" class="wishlist-btn-detail">
-                {% if is_wishlisted %}
-                    <button class="wishlist-added">
-                        <img src="{% static 'img/icons/w_add.svg' %}" alt="added to wishlist" class="wishlist-icon-remove">
-                        Added to Wishlist {{ wishlist_count }}
-                    </button>
-                    
-                {% else %}
-                    <button class="wishlist-add">
-                        <img src="{% static 'img/icons/w_add.svg' %}" alt="remove from wishlist" class="wishlist-icon-remove">
-                        Add to Wishlist {{ wishlist_count }}
-                    </button>
-                    
-                {% endif %}
-                </a>
+        <h1>{{ game.released }} {% if game.game_age %}({{ game.game_age }} years ago){% endif %}</h1>
+        <!-- Wishlist button wrapper -->
+        <div class="wishlist-btn-detail" data-game-id="{{ game.id }}" data-url="{% url 'wishlist_toggle' %}">
+            {% if is_wishlisted %}
+                <button class="wishlist-added wishlist-btn">
+                    <img src="{% static 'img/icons/w_add.svg' %}" alt="added to wishlist" class="wishlist-icon-remove">
+                    Added to Wishlist {{ wishlist_count }}
+                </button>
+            {% else %}
+                <button class="wishlist-add wishlist-btn">
+                    <img src="{% static 'img/icons/w_add.svg' %}" alt="remove from wishlist" class="wishlist-icon-remove">
+                    Add to Wishlist {{ wishlist_count }}
+                </button>
+            {% endif %}
         </div>
-        
+        <div class="rating-bar-detail" id="overall-bar-{{ game.id }}">
+            {% if game.overall_breakdown %}
+                {% for r in game.overall_breakdown %}
+                    {% if r.id %}
+                        <div class="segment" style="width: {{ r.percentage }}%; background: {{ r.color }}" >
+                        {% if r.image %}
+                        <img src="{{ r.image }}" alt="{{ r.name }}" class="rating-image">
+                        {% endif %}
+                    </div>
+                    {% else %}
+                        <div class="segment" style="width: 100%; background: grey">
+                            <span>no reviews</span>
+                        </div>
+                    {% endif %}  
+                {% endfor %}
+            {% else %}
+                 <div class="segment" style="width: 100%; background: grey">
+                        <span>no reviews</span>
+                 </div>         
+            {% endif %}
+        </div>
+        <div class="overall-rating">
+            <strong id="game-{{ game.id }}-label ">{{ game.overall_label }}</strong>
+            <span id="game-{{ game.id }}-avg">{{ game.overall_average }}</span>
+     </div>
+     <div class="category-avg-check">
+            {% for category in categories %}
+                {{ category.name }}
+                (<span id="avg-{{ game.id }}-{{ category.key }}">{{ game|category_average_filter:category.key }}</span>)
+            {% endfor %}
+     </div>
+        <div>
+            <h1>About</h1>
+            <h3>{{ game.description }}</h3>
+        </div>
+        {% if game.developer.exists %}
+           <div>
+                <h3 style="display: inline;">Developed By:</h3>
+                {% for d in game.developer.all %}
+                    {{ d.name }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </div>
+        {% endif %}
+         {% if game.publisher.exists %}
+           <div>
+                <h3 style="display: inline;">Published By:</h3>
+                {% for p in game.publisher.all %}
+                    {{ p.name }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </div>
+        {% endif %}
+        <div class="row-container">
+            {% if game.platforms.exists %}
+            <div class="box">
+                <h3>Platforms</h3>
+                <ul>
+                    {% for platform in game.platforms.all %}
+                    <li>{{ platform.name }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+            {% if game.genres.exists %}
+            <div class="box">
+                <h3>Genres</h3>
+                <ul>
+                    {% for genre in game.genres.all %}
+                    <li>{{ genre.name }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+            {% if game.game_modes.exists %}
+            <div class="box">
+                <h3>Game Modes</h3>
+                <ul>
+                    {% for gm in game.game_modes.all %}
+                    <li>{{ gm.name }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+            {% if game.franchises.exists %}
+            <div class="box">
+                <h3>Franchise</h3>
+                <ul>
+                    {% for f in game.franchises.all %}
+                    <li>{{ f.name }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+            {% if game.franchises.exists %}
+            <div class="box">
+                <h3>Franchise</h3>
+                <ul>
+                    {% for f in game.franchises.all %}
+                    <li>{{ f.name }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+            {% if game.player_perspectives.exists %}
+            <div class="box">
+                <h3>Player Perspectives</h3>
+                <ul>
+                    {% for pp in game.player_perspectives.all %}
+                    <li>{{ pp.name }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+            {% if game.themes.exists %}
+            <div class="box">
+                <h3>Themes</h3>
+                <ul>
+                    {% for theme in game.themes.all %}
+                    <li>{{ theme.name }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
     </div>
+    {% if game.similar_games.exists %}
+       <h1>similar games</h1>
+       <div class="similar-games-row">
+        {% for sg in similar_games %}
+            {% include "partials/card.html" with game=sg %}
+        {% endfor %}
+       </div>
+    {% endif%}
 </div>
 
-
-
-{% endblock %} {% endcomment %}
+<script src="{% static 'js/gameDetail.js' %}"></script>
+{% endblock %}
