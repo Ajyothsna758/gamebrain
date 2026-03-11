@@ -144,6 +144,7 @@ http://localhost:8000
 - It suggests similar games based on wishlist and library games.
 - This system uses games meta data like genres, platforms, player perspective, franchise, themes, game mode, developer and publisher
 - The general idea behind these recommender systems is that if a person likes a particular game, he or she will also like an game that is similar to it.
+- Added ML based Recommendation for existing users
 ### Development:
 - First, I extracted user interactions such as library games, ratings, and wishlist using the `get_user_seed_games` function.
 - Extracted structured metadata from a user’s seed games, which we use to build a user preference profile for content-based recommendations.
