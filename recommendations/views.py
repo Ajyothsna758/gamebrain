@@ -11,7 +11,7 @@ from games.models import WishList, GameStatus, UserLibrary, RatingCategory, Rati
 from .serializers import RecommendationSerializer
 from .services.existing_user_rec import existing_user_recommendations, get_user_seed_games
 from .services.game_recommendation import get_recommendations
-from .services.ml_recommender import ml_existing_user_recommendations
+from .services.ml_existing_user_rec import ml_existing_user_recommendations
 from .pagination import RecommendationAPIPagination
 from .throttle import RecommendationThrottle
 

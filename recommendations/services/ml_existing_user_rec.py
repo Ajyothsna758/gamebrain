@@ -60,6 +60,7 @@ class MLExistingUserRecommendation:
 
 recommender = MLExistingUserRecommendation()
 
+
 def ml_existing_user_recommendations(user, limit=500):
     seed_games = get_user_seed_games(user)
     seed_ids = list(seed_games.values_list("id", flat=True))
