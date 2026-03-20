@@ -49,6 +49,35 @@
     gap: 8px; 
     margin-top: 6px;
 }
+/* login */
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+.form-box {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 300px;
+}
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.error {
+    color: red;
+}
+.buttons {
+    background-color: green; 
+    font-weight: bolder;
+    height: 40px; 
+    width: 100px; 
+    border-radius: 3px; 
+    font-size: large;
+}
 /* wishlist */
 .wishlist-icon {
     width: 40px;

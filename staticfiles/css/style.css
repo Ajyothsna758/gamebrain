@@ -49,6 +49,27 @@
     gap: 8px; 
     margin-top: 6px;
 }
+/* login */
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+.form-box {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 300px;
+}
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.error {
+    color: red;
+}
 /* wishlist */
 .wishlist-icon {
     width: 40px;

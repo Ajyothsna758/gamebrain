@@ -2,20 +2,24 @@
 {% load static %}
 <div>
     {% block content %}
-    <h2>Login Form</h2>
-    {% if messages %}
-    {% for message in messages %}
-    <p style="color:red;">{{ message }}</p>
-    {% endfor %}
-    {% endif %}
-    <form method="POST">
-        {% csrf_token %}
-        <label for="username">Username</label>
-        {{ form.username }}
-        <label for="password">Password</label>
-        {{ form.password }}
-        <button type="submit">sign in</button>
-    </form>
-    <a href="{% url 'sign_up' %}" style="text-decoration: none;">Create Account</a>
+    <div class="container">
+        <div class="form-box">
+            <h2>Login Form</h2>
+            {% if messages %}
+            {% for message in messages %}
+            <p style="color:red;">{{ message }}</p>
+            {% endfor %}
+            {% endif %}
+            <form method="POST">
+                {% csrf_token %}
+                <label for="username" style="font-weight: bold;">Username:</label>
+                {{ form.username }}
+                <label for="password" style="font-weight: bold;">Password:</label>
+                {{ form.password }}
+                <button type="submit" class="buttons">sign in</button>
+            </form>
+            <a href="{% url 'sign_up' %}" style="text-decoration: none;">Create Account</a>
+    </div>
+        </div>  
 </div>
 {% endblock %}
