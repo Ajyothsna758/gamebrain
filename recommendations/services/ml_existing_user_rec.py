@@ -4,6 +4,7 @@ from games.models import Game
 from .existing_user_rec import get_user_seed_games
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+from django.db.utils import ProgrammingError
 
 class MLExistingUserRecommendation:
     def __init__(self):
@@ -58,13 +59,24 @@ class MLExistingUserRecommendation:
             for g in games
         ]
 
-recommender = MLExistingUserRecommendation()
+recommender = None
+def get_recommender():
+    global recommender
+    if recommender is None:
+        try:
+            recommender = MLExistingUserRecommendation()
+        except ProgrammingError:
+            return None               
+    return recommender
 
 
 def ml_existing_user_recommendations(user, limit=500):
     seed_games = get_user_seed_games(user)
     seed_ids = list(seed_games.values_list("id", flat=True))
     if not seed_ids:
+        return []
+    recommender = get_recommender()
+    if recommender is None:
         return []
     return recommender.recommended(seed_ids, limit)         
             

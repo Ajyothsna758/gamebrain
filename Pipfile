@@ -13,6 +13,10 @@ requests = "*"
 pytz = "*"
 djangorestframework = "*"
 gunicorn = "*"
+pandas = "*"
+scikit-learn = "*"
+dj-database-url = "*"
+psycopg2-binary = "*"
 
 [dev-packages]
 
