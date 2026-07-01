@@ -4,15 +4,21 @@ python manage.py migrate
 python manage.py collectstatic --noinput
 
 python manage.py shell <<EOF
+import os
 from django.contrib.auth import get_user_model
+
 User = get_user_model()
 
-username = "admin"
-password = "shiva@1234"
-email = "admin@example.com"
+username = os.environ.get("DJANGO_SUPERUSER_USERNAME")
+password = os.environ.get("DJANGO_SUPERUSER_PASSWORD")
+email = os.environ.get("DJANGO_SUPERUSER_EMAIL")
 
-if not User.objects.filter(username=username).exists():
-    User.objects.create_superuser(username, email, password)
+if username and password and email:
+    if not User.objects.filter(username=username).exists():
+        User.objects.create_superuser(username, email, password)
+        print("Superuser created.")
+    else:
+        print("Superuser already exists.")
 EOF
 
 exec "$@"
