@@ -18,7 +18,7 @@ services:
   web:
     build: .
     container_name: gamearena_web
-    command: python manage.py runserver 0.0.0.0:8000
+    command: gunicorn gamearena.wsgi:application --bind 0.0.0.0:8000
     volumes:
       - .:/app
     ports:
