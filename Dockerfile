@@ -22,3 +22,5 @@ COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
+
+CMD ["sh", "-c", "gunicorn gamearena.wsgi:application --bind 0.0.0.0:${PORT:-10000}"]
