@@ -160,7 +160,7 @@ LOGOUT_REDIRECT_URL = "/"
 
 # for internal dynamic images (user/ admin may upload  ex: game images)
 MEDIA_URL= "/media/"
-MEDIA_ROOT= os.path.join(BASE_DIR, "media")
+MEDIA_ROOT= BASE_DIR / "media"
 
 # IGDB configurations
 IGDB_CLIENT_ID = env("IGDB_CLIENT_ID")
