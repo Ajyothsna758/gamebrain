@@ -21,4 +21,9 @@ if username and password and email:
         print("Superuser already exists.")
 EOF
 
+if [ -f data.json ]; then
+    python manage.py loaddata data.json
+fi
+
+
 exec "$@"
