@@ -26,4 +26,4 @@ if [ -f data.json ]; then
 fi
 
 
-exec "$@"
+exec gunicorn gamearena.wsgi:application --bind 0.0.0.0:${PORT:-10000}
