@@ -25,5 +25,5 @@ if [ -f data.json ]; then
     python manage.py loaddata data.json
 fi
 
-
+echo "Starting Gunicorn..."
 exec gunicorn gamearena.wsgi:application --bind 0.0.0.0:${PORT:-10000}
