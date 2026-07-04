@@ -26,15 +26,8 @@ if username and password and email:
         print("Exists")
 EOF
 
+
 echo "STEP 4"
-
-if [ -f data.json ]; then
-    echo "Loading fixture..."
-    python manage.py loaddata data.json
-    echo "Fixture loaded"
-fi
-
-echo "STEP 5"
 
 echo "Starting Gunicorn"
 
