@@ -1,29 +1,42 @@
 #!/bin/sh
+set -e
 
+echo "STEP 1"
 python manage.py migrate
+
+echo "STEP 2"
 python manage.py collectstatic --noinput
 
+echo "STEP 3"
 python manage.py shell <<EOF
 import os
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
-username = os.environ.get("DJANGO_SUPERUSER_USERNAME")
-password = os.environ.get("DJANGO_SUPERUSER_PASSWORD")
-email = os.environ.get("DJANGO_SUPERUSER_EMAIL")
+username=os.getenv("DJANGO_SUPERUSER_USERNAME")
+password=os.getenv("DJANGO_SUPERUSER_PASSWORD")
+email=os.getenv("DJANGO_SUPERUSER_EMAIL")
 
 if username and password and email:
     if not User.objects.filter(username=username).exists():
-        User.objects.create_superuser(username, email, password)
-        print("Superuser created.")
+        User.objects.create_superuser(username,email,password)
+        print("Created")
     else:
-        print("Superuser already exists.")
+        print("Exists")
 EOF
 
+echo "STEP 4"
+
 if [ -f data.json ]; then
+    echo "Loading fixture..."
     python manage.py loaddata data.json
+    echo "Fixture loaded"
 fi
 
-echo "Starting Gunicorn..."
-exec gunicorn gamearena.wsgi:application --bind 0.0.0.0:${PORT:-10000}
+echo "STEP 5"
+
+echo "Starting Gunicorn"
+
+exec gunicorn gamearena.wsgi:application \
+    --bind 0.0.0.0:${PORT:-10000}
