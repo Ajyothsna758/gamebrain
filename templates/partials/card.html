@@ -65,7 +65,7 @@
                                    data-status-id="{{ status.id }}"
                                    data-url="{% url 'update_status' game.id status.id %}">
                                    <div class="status-top">
-                                        <img src="{{ status.image.url }}" class="status-icon">
+                                        <img src="{% static 'img/status' %}{{ status.image.name|cut:'status_icons/' }}" class="status-icon">
                                         <span class="status-name">{{ status.name }}</span>
                                    </div>
                                    <div class="status-desc">{{ status.description }}</div>
