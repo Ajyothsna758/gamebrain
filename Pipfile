@@ -12,6 +12,11 @@ django-environ = "*"
 requests = "*"
 pytz = "*"
 djangorestframework = "*"
+pandas = "*"
+scikit-learn = "*"
+dj-database-url = "*"
+psycopg2-binary = "*"
+whitenoise = "*"
 gunicorn = "*"
 
 [dev-packages]
