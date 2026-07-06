@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.db.models import Avg, Count
 from django.core.validators import FileExtensionValidator
 from django.utils.timezone import now
+from django.templatetags.static import static
 
 # Create your models here.   
 
@@ -128,7 +129,7 @@ class Game(models.Model):
             {
                 "id":r.id,
                 "name":r.name,
-                "image":r.image.url,
+                "image":static(f"img/ratings/{r.image.name.replace('ratings/','')}"),
                 "color":r.color,
                 "count":r.count,
                 "percentage":round((r.count / total)*100, 1)
@@ -158,7 +159,7 @@ class Game(models.Model):
             rating_type = RatingType.objects.filter(weight__gte=avg).order_by("weight").first()
         else:
             rating_type = RatingType.objects.filter(weight__gte=avg).order_by("weight").first()
-        return rating_type.image.url if rating_type else None               
+        return (static(f"img/ratings/{rating_type.image.name.replace('ratings/', '')}") if rating_type else None)               
         
     def category_average(self, category_key):
         avg = self.category_ratings.filter(category__key=category_key).aggregate(avg=Avg("rating_type__weight"))["avg"]
@@ -173,7 +174,7 @@ class Game(models.Model):
             {
                 "id": r.id,
                 "name": r.name,
-                "image":r.image.url,
+                "image":static(f"img/ratings/{r.image.name.replace('ratings/', '')}"),
                 "color": r.color,
                 "count": r.count,
                 "category_rating_name": r.category_rating_name,
