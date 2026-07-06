@@ -1,3 +1,4 @@
+{% load static %}
 <nav class="library-navbar">
     <ul>
         <li class="{% if not active_status %}active{% endif %}">
@@ -6,7 +7,7 @@
         {% for status in statuses %}
            <li class="{% if active_status == status.id %}active{% endif %}">
             <a href="{% url 'library_by_status' status.id %}">
-                <img src="{{ status.image.url }}" width="18" alt="{{ status.name }}">
+                <img src="{% static 'img/status/' %}{{ status.image.name|cut:'status_icons/' }}" width="18" alt="{{ status.name }}">
                 {{ status.name }}
             </a>
            </li>

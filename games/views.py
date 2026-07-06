@@ -7,6 +7,7 @@ from django.views.decorators.http import require_POST
 from django.http import JsonResponse
 from django.db import transaction
 from django.core.paginator import Paginator
+from django.templatetags.static import static
 
 # games
 def games_list(request):
@@ -134,7 +135,7 @@ def toggle_library(request, game_id):
         return JsonResponse({
             "in_library": True,
             "status_id": lib_game.status.id,
-            "status_icon":status.image.url,
+            "status_icon":static(f"img/status/{status.image.name.replace('status_icons/', '')}"),
             "removed_from_wishlist": True          
         })
     return JsonResponse({"error":"Invalid request"}, status=400)    
