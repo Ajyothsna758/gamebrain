@@ -65,7 +65,7 @@
                                    data-status-id="{{ status.id }}"
                                    data-url="{% url 'update_status' game.id status.id %}">
                                    <div class="status-top">
-                                        <img src="{{ status.image.url }}" class="status-icon">
+                                        <img src="{% static 'img/status/' %}{{ status.image.name|cut:'status_icons/' }}" class="status-icon">
                                         <span class="status-name">{{ status.name }}</span>
                                    </div>
                                    <div class="status-desc">{{ status.description }}</div>
@@ -95,7 +95,7 @@
                                    {% if overall_rating|get_item:game.id == rate.id %}active{% endif %}"
                                    data-game="{{ game.id }}"
                                    data-rating="{{ rate.id }}">
-                                   <img src="{{ rate.image.url }}" alt="{{ rate.name }}" width="24">
+                                   <img src="{% static 'img/ratings/' %}{{ rate.image.name|cut:'ratings/' }}" alt="{{ rate.name }}" width="24">
                                    {{ rate.name }}
                               </button>
                          {% endfor %}
@@ -111,7 +111,7 @@
                                         data-game="{{ game.id }}"
                                         data-rating="{{ rate.id }}"
                                         data-category="{{ category.id }}">                       
-                                        <img src="{{ rate.image.url }}" alt="{{ rate.category_rating_name }}" width="24">
+                                        <img src="{% static 'img/ratings/' %}{{ rate.image.name|cut:'ratings/' }}" alt="{{ rate.category_rating_name }}" width="24">
                                    </button>          
                                    {% endfor %}
                               </div>

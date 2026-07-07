@@ -1,5 +1,50 @@
+# GameArena 🎮
+GameArena is a full-stack game tracking and recommendation platform built with Django.
+
+Users can:
+- Browse thousands of games
+- Maintain a personal game library
+- Create wishlists
+- Rate games across multiple categories
+- Receive personalized game recommendations
+
+This project demonstrates backend development, REST APIs, MySQL, PostgreSQL, Docker, and recommendation system implementation.
+
+# Live Demo 🚀
+**Application:** https://gamebrain.onrender.com
+
+Note: Hosted on Render (Free Tier). The application may take 30–60 seconds to wake after periods of inactivity.
+
+## Screenshots
+
+# Tech Stack
+### Backend
+- Python
+- Django
+- Django REST Framework
+
+### Database
+- PostgreSQL
+- MySQL
+
+### Frontend
+- HTML
+- CSS
+- JavaScript
+- AJAX
+
+### Machine Learning
+- scikit-learn
+- Content-Based Recommendation
+
+### DevOps
+- Docker
+- Docker Compose
+- Gunicorn
+- Render
+
 # Run with Docker
-#### 1. Clone  the repo:
+#### 1. Clone the repo:
 ```
 git clone git@github.com:Ajyothsna758/gamebrain.git
 cd gamebrain
@@ -14,10 +59,8 @@ cp .env.example .env
 sudo docker compose down -v
 sudo docker compose up --build
 ```
-#### 4. Access the app
-```
-http://localhost:8000
-```
+#### 4. Access the Application
+**Application:** http://localhost:8000
 # Game Tracking & Recommendations Application using Django + Mysql
 - Fetch data from IGDB API
 - Developed wishlist, library and rating functionality for games
