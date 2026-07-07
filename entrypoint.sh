@@ -32,4 +32,4 @@ echo "STEP 4"
 echo "Starting Gunicorn"
 
 exec gunicorn gamearena.wsgi:application \
-    --bind 0.0.0.0:${PORT:-10000}
+    --bind 0.0.0.0:${PORT:-8000}
