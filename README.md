@@ -56,8 +56,7 @@ cp .env.example .env
 ```
 #### 3. Start containers
 ```
-sudo docker compose down -v
-sudo docker compose up --build
+docker compose up --build
 ```
 #### 4. Access the Application
 **Application:** http://localhost:8000

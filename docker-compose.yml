@@ -20,7 +20,7 @@ services:
     container_name: gamearena_web
     command: gunicorn gamearena.wsgi:application --bind 0.0.0.0:8000
     volumes:
-      - .:/app
+      - .:/app:Z
     ports:
       - "8000:8000"
     env_file:
